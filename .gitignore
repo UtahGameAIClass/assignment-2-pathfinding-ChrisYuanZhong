@@ -84,6 +84,14 @@ Desktop.ini
 .vs/*
 .vs
 
+# Executable
+*.exe
 
+# Archive files
+*.a
 
+# Static library
+*.lib
 
+# The example folder
+examples/
