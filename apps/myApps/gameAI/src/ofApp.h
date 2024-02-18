@@ -24,5 +24,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 	
 private:
+	float lastTime;
+
 	std::vector<Boid*> boids;
 };

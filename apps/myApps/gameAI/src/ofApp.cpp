@@ -1,13 +1,21 @@
 #include "ofApp.h"
 
+#include <Engine/CZPhysics/CZPhysics.h>
+
 //--------------------------------------------------------------
 void ofApp::setup(){
+	lastTime = ofGetElapsedTimef();
 	boids.push_back(new Boid(100.0f, 100.0f, 0.0f));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	// Calculate delta time
+	float currentTime = ofGetElapsedTimef();
+	float deltaTime = currentTime - lastTime;
+	lastTime = currentTime;
 
+	ChrisZ::Physics::Update(deltaTime);
 }
 
 //--------------------------------------------------------------
