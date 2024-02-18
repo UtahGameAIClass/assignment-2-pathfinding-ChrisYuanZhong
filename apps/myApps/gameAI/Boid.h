@@ -3,20 +3,20 @@
 #ifndef GAMEAI_BOID_H_
 #define GAMEAI_BOID_H_
 
-#include <Engine/Assets/GameObject.h>
-
 #include <ofColor.h>
 
-class Boid : public eae6320::Assets::GameObject
+#include "GameAIGameObject.h"
+
+class Boid : public GameAIGameObject
 {
 public:
 	Boid();
 	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, const ofColor i_color = ofColor::white);
 	//~Boid();
 
-	//void Update();
+	void Update(const float i_deltaTime) override;
 
-	void Draw();
+	void Draw() override;
 
 private:
 	// Color of the boid

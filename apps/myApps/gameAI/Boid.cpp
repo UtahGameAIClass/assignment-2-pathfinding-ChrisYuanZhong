@@ -28,20 +28,23 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 	m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, 1.0f));
 }
 
+void Boid::Update(const float i_deltaTime)
+{
+}
+
 void Boid::Draw()
 {
 	eae6320::Math::sVector position = this->GetPosition();
-	eae6320::Math::cQuaternion orientation = this->GetOrientation();
+	
+	ofSetColor(color);
 
-	// Draw the boid
 	// Draw the circle
 	ofDrawCircle(position.x, position.y, 10);
 
 	// Draw the triangle using the orientation
 	ofPushMatrix();
 	ofTranslate(position.x, position.y);
-	ofRotateZRad(-orientation.GetZRotation());
-	ofSetColor(color);
+	ofRotateZRad(-this->GetOrientation().GetZRotation());	// Negative Z rotation because of the coordinate system
 	ofDrawTriangle(0, -10, 0, 10, 20, 0);
 	ofPopMatrix();
 }

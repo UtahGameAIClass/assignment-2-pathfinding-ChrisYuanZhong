@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-#include "Boid.h"
+#include "GameAIGameObject.h"
 
 class ofApp : public ofBaseApp{
 
@@ -26,5 +26,5 @@ class ofApp : public ofBaseApp{
 private:
 	float lastTime;
 
-	std::vector<Boid*> boids;
+	std::vector<GameAIGameObject*> gameObjects;
 };

@@ -105,11 +105,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Boid.cpp" />
+    <ClCompile Include="GameAIGameObject.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boid.h" />
+    <ClInclude Include="GameAIGameObject.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
   <ItemGroup>

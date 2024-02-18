@@ -229,6 +229,12 @@ void ChrisZ::Physics::HandleCollision(Collider* collider, Collider* other, Colli
 		bodyB->AddImpulse(frictionImpulse);
 	}
 
+    // Return if both colliders are sphere colliders
+    if (dynamic_cast<SphereCollider*>(collider) && dynamic_cast<SphereCollider*>(other))
+	{
+		return;
+	}
+
     // Apply the friction torque to the bodies (angular velocity)
     eae6320::Math::sVector frictionTorqueA = eae6320::Math::Cross(collisionInfo.contactNormal, frictionImpulse);
     eae6320::Math::sVector frictionTorqueB = eae6320::Math::Cross(collisionInfo.contactNormal, -frictionImpulse);

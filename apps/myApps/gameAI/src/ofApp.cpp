@@ -2,10 +2,18 @@
 
 #include <Engine/CZPhysics/CZPhysics.h>
 
+#include "Player.h"
+#include "Boid.h"
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	lastTime = ofGetElapsedTimef();
-	boids.push_back(new Boid(100.0f, 100.0f, 0.0f));
+
+	// Make player the first game object
+	gameObjects.push_back(new Player());
+
+	// Create some boids
+	gameObjects.push_back(new Boid(100.0f, 100.0f, 0.0f));
 }
 
 //--------------------------------------------------------------
@@ -16,23 +24,31 @@ void ofApp::update(){
 	lastTime = currentTime;
 
 	ChrisZ::Physics::Update(deltaTime);
+
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->Update(deltaTime);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	for (int i = 0; i < boids.size(); i++) {
-		boids[i]->Draw();
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->Draw();
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+	if (Player* player = dynamic_cast<Player*>(gameObjects[0])) {
+		player->keyPressed(key);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+if (Player* player = dynamic_cast<Player*>(gameObjects[0])) {
+		player->keyReleased(key);
+	}
 }
 
 //--------------------------------------------------------------
