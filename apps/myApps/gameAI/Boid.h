@@ -18,22 +18,29 @@ public:
 
 	void Draw() override;
 
+	void WrapAround();
+
 	// Input functions
+	void mousePressed(int x, int y, int button) override;
 	void mouseDragged(int x, int y, int button) override;
 
 	// AI functions
 	void LookAt(const eae6320::Math::sVector i_direction);
 	eae6320::Math::sVector Seek(const eae6320::Math::sVector i_target);
+	eae6320::Math::sVector Arrive(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Flee(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
+	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
 
 private:
 	// Color of the boid
 	ofColor color = ofColor::white;
 
 	// AI variables
-	const float maxSpeed = 300.0f;
-	const float maxForce = 150.0f;
+	const float maxSpeed = 200.0f;
+	const float maxForce = 300.0f;
+	const float evadeRadius = 2000.0f;
+	const float slowRadius = 100.0f;
 
 	eae6320::Math::sVector target = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	Player* player = nullptr;

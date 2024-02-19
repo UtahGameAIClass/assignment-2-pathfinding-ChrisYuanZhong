@@ -13,7 +13,7 @@ void ofApp::setup(){
 	gameObjects.push_back(new Player());
 
 	// Create some boids
-	gameObjects.push_back(new Boid(100.0f, 100.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
+	gameObjects.push_back(new Boid(500.0f, 500.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
 }
 
 //--------------------------------------------------------------

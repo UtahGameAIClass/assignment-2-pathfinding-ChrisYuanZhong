@@ -19,6 +19,10 @@ ChrisZ::Physics::CollisionInfo ChrisZ::Physics::SphereCollider::Intersects(Colli
         // If the distance is less than or equal to the sum of the radius, the spheres intersect
         if (distance <= (this->radius + otherSphere->radius)) {
             // Calculate and return CollisionInfo
+            if (distance == 0.0f) {
+				return CollisionInfo(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), this->radius);
+			}
+
             eae6320::Math::sVector contactNormal = (otherSphere->center - this->center).GetNormalized();
             float penetrationDepth = (this->radius + otherSphere->radius) - distance;
             return CollisionInfo(contactNormal, penetrationDepth);

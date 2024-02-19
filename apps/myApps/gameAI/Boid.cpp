@@ -41,6 +41,8 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 
 void Boid::Update(const float i_deltaTime)
 {
+	WrapAround();
+
 	eae6320::Math::sVector velocity = m_rigidBody->GetVelocity();
 
 	// Limit the speed
@@ -52,7 +54,8 @@ void Boid::Update(const float i_deltaTime)
 
 	// AI
 	LookAt(velocity);
-	this->m_rigidBody->AddForce(Pursue(player));
+	//this->m_rigidBody->AddForce(Arrive(target));
+	this->m_rigidBody->AddForce(Evade(player));
 }
 
 void Boid::Draw()
@@ -73,6 +76,36 @@ void Boid::Draw()
 	ofRotateZRad(-this->GetOrientation().GetZRotation());	// Negative Z rotation because of the coordinate system
 	ofDrawTriangle(0, -10, 0, 10, 20, 0);
 	ofPopMatrix();
+}
+
+void Boid::WrapAround()
+{
+	eae6320::Math::sVector position = this->GetPosition();
+
+	if (position.x < 0)
+	{
+		position.x = ofGetWidth();
+	}
+	else if (position.x > ofGetWidth())
+	{
+		position.x = 0;
+	}
+
+	if (position.y < 0)
+	{
+		position.y = ofGetHeight();
+	}
+	else if (position.y > ofGetHeight())
+	{
+		position.y = 0;
+	}
+
+	this->SetPosition(position);
+}
+
+void Boid::mousePressed(int x, int y, int button)
+{
+	this->target = eae6320::Math::sVector(x, y, 0.0f);
 }
 
 void Boid::mouseDragged(int x, int y, int button)
@@ -111,6 +144,40 @@ eae6320::Math::sVector Boid::Seek(const eae6320::Math::sVector i_target)
 	}
 }
 
+eae6320::Math::sVector Boid::Arrive(const eae6320::Math::sVector i_target)
+{
+	eae6320::Math::sVector desiredVelocity = i_target - this->GetPosition();
+
+	if (desiredVelocity.GetLength() != 0.0f)
+	{
+		float distance = desiredVelocity.GetLength();
+
+		if (distance < slowRadius)
+		{
+			float desiredVelocityMagnitude = distance * maxSpeed / slowRadius;
+			desiredVelocity = desiredVelocity.GetNormalized() * desiredVelocityMagnitude;
+		}
+		else
+		{
+			desiredVelocity = desiredVelocity.GetNormalized() * maxSpeed;
+		}
+
+		eae6320::Math::sVector force = desiredVelocity - m_rigidBody->GetVelocity();
+
+		// Limit the force
+		if (force.GetLength() > maxForce)
+		{
+			force = force.GetNormalized() * maxForce;
+		}
+
+		return force;
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
+}
+
 eae6320::Math::sVector Boid::Flee(const eae6320::Math::sVector i_target)
 {
 	return -Seek(i_target);
@@ -119,11 +186,30 @@ eae6320::Math::sVector Boid::Flee(const eae6320::Math::sVector i_target)
 eae6320::Math::sVector Boid::Pursue(GameAIGameObject* i_target)
 {
 	eae6320::Math::sVector distance = i_target->GetPosition() - this->GetPosition();
-	float updatesNeeded = distance.GetLength() / maxSpeed;
+	//float updatesNeeded = distance.GetLength() / maxSpeed;
+
+	float updatesNeeded = 1.0f;
+	if (i_target->GetRigidBody()->GetVelocity().GetLength() != 0.0f)
+	{
+		float updatesNeeded = distance.GetLength() / i_target->GetRigidBody()->GetVelocity().GetLength();
+	}
+
 	eae6320::Math::sVector futurePosition = i_target->GetPosition() + i_target->GetRigidBody()->GetVelocity() * updatesNeeded;
 
 	// This is for drawing the predicted position
 	target = futurePosition;
 
 	return Seek(futurePosition);
+}
+
+eae6320::Math::sVector Boid::Evade(GameAIGameObject* i_target)
+{
+	eae6320::Math::sVector distance = i_target->GetPosition() - this->GetPosition();
+
+	if (distance.GetLength() > evadeRadius)
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
+
+	return -Pursue(i_target);
 }
