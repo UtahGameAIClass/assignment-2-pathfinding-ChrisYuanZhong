@@ -78,6 +78,10 @@ void ChrisZ::Physics::RigidBody::Update(const float i_secondCountToIntegrate)
 			gameObject->SetOrientation(gameObject->GetOrientation().GetNormalized());
 		}
 	}
+	// Update angular velocity
+	{
+		angularVelocity *= (1 - dragCoefficient * i_secondCountToIntegrate);
+	}
 
 	// Reset force
 	force = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);

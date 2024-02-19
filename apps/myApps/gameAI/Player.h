@@ -22,9 +22,9 @@ public:
 
 	void Draw() override;
 
-	void keyPressed(int key);
+	void keyPressed(int key) override;
 
-	void keyReleased(int key);
+	void keyReleased(int key) override;
 
 private:
 	float speed = 500.0f;

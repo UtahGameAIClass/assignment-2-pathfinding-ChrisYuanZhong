@@ -13,7 +13,7 @@ void ofApp::setup(){
 	gameObjects.push_back(new Player());
 
 	// Create some boids
-	gameObjects.push_back(new Boid(100.0f, 100.0f, 0.0f));
+	gameObjects.push_back(new Boid(100.0f, 100.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
 }
 
 //--------------------------------------------------------------
@@ -39,46 +39,58 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	if (Player* player = dynamic_cast<Player*>(gameObjects[0])) {
-		player->keyPressed(key);
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->keyPressed(key);
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-if (Player* player = dynamic_cast<Player*>(gameObjects[0])) {
-		player->keyReleased(key);
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->keyReleased(key);
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mouseMoved(x, y);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mouseDragged(x, y, button);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mousePressed(x, y, button);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mouseReleased(x, y, button);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mouseEntered(x, y);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->mouseExited(x, y);
+	}
 }
 
 //--------------------------------------------------------------
