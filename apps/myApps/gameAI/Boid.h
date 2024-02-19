@@ -31,6 +31,7 @@ public:
 	eae6320::Math::sVector Flee(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
 	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
+	eae6320::Math::sVector Wander();
 
 private:
 	// Color of the boid
@@ -41,8 +42,17 @@ private:
 	// AI variables
 	const float maxSpeed = 200.0f;
 	const float maxForce = 300.0f;
+
 	const float evadeRadius = 2000.0f;
+	
+	// Arrive parameters
 	const float slowRadius = 100.0f;
+
+	// Wander parameters
+	const float wanderRadius = 100.0f; // Radius for the wander circle
+	const float wanderDistance = 30.0f; // Distance for the wander circle
+	const float wanderJitter = 0.5f; // Randomness to be added
+	float wanderAngle = 0.0f;
 
 	eae6320::Math::sVector target = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	Player* player = nullptr;

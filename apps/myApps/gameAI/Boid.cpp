@@ -37,6 +37,8 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 
 	target = this->GetPosition();
 	player = i_player;
+
+	wanderAngle = ofRandom(0, 2 * M_PI);
 }
 
 void Boid::Update(const float i_deltaTime)
@@ -57,7 +59,9 @@ void Boid::Update(const float i_deltaTime)
 	// AI
 	LookAt(velocity);
 	//this->m_rigidBody->AddForce(Arrive(target));
-	this->m_rigidBody->AddForce(Evade(player));
+	//this->m_rigidBody->AddForce(Evade(player));
+	this->m_rigidBody->AddForce(Wander());
+
 }
 
 void Boid::Draw()
@@ -69,7 +73,7 @@ void Boid::Draw()
 	// Draw the trace
 	for (int i = 0; i < trace.size(); i++)
 	{
-		//ofDrawCircle(trace[i].x, trace[i].y, 1);
+		ofDrawCircle(trace[i].x, trace[i].y, 1);
 	}
 
 	// This is for drawing the predicted position
@@ -220,4 +224,36 @@ eae6320::Math::sVector Boid::Evade(GameAIGameObject* i_target)
 	}
 
 	return -Pursue(i_target);
+}
+
+eae6320::Math::sVector Boid::Wander()
+{
+	if (m_rigidBody->GetVelocity().GetLength() == 0.0f)
+	{
+		m_rigidBody->SetVelocity(eae6320::Math::sVector(1.0f, 0.0f, 0.0f));
+	}
+
+	// Calculate the circle center
+	eae6320::Math::sVector circleCenter = m_rigidBody->GetVelocity();
+	circleCenter.Normalize();
+	circleCenter *= wanderDistance;
+
+	// Calculate the displacement force
+	eae6320::Math::sVector displacement(0.0f, -1.0f, 0.0f);
+	displacement *= wanderRadius;
+
+	// Randomly change the vector direction
+	// by making it change its current angle
+	float len = displacement.GetLength();
+	displacement.x = cos(wanderAngle) * len;
+	displacement.y = sin(wanderAngle) * len;
+
+	// Change wanderAngle just a bit, so it
+	// won't have the same value in the
+	// next game frame.
+	wanderAngle += ofRandom(-1.0f, 1.0f) * wanderJitter;
+
+	// Finally, calculate and return the wander force
+	eae6320::Math::sVector wanderForce = circleCenter + displacement;
+	return wanderForce;
 }
