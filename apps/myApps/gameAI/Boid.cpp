@@ -43,6 +43,8 @@ void Boid::Update(const float i_deltaTime)
 {
 	WrapAround();
 
+	trace.push_back(this->GetPosition());
+
 	eae6320::Math::sVector velocity = m_rigidBody->GetVelocity();
 
 	// Limit the speed
@@ -63,6 +65,12 @@ void Boid::Draw()
 	eae6320::Math::sVector position = this->GetPosition();
 	
 	ofSetColor(color);
+
+	// Draw the trace
+	for (int i = 0; i < trace.size(); i++)
+	{
+		//ofDrawCircle(trace[i].x, trace[i].y, 1);
+	}
 
 	// This is for drawing the predicted position
 	ofDrawCircle(target.x, target.y, 5);

@@ -36,6 +36,8 @@ private:
 	// Color of the boid
 	ofColor color = ofColor::white;
 
+	std::vector<eae6320::Math::sVector> trace;
+
 	// AI variables
 	const float maxSpeed = 200.0f;
 	const float maxForce = 300.0f;
