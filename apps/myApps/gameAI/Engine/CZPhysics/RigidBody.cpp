@@ -62,20 +62,17 @@ void ChrisZ::Physics::RigidBody::Update(const float i_secondCountToIntegrate)
 	// Update orientation
 	{
 		// Check if angular velocity is zero
-		if (!(angularVelocity.x < VELOCITY_THRESHOLD && angularVelocity.y < VELOCITY_THRESHOLD && angularVelocity.z < VELOCITY_THRESHOLD))
+		if (!(abs(angularVelocity.x) < VELOCITY_THRESHOLD && abs(angularVelocity.y) < VELOCITY_THRESHOLD && abs(angularVelocity.z) < VELOCITY_THRESHOLD))
 		{
 			// Calculate the angle (magnitude of the vector)
-			float angleInRadians = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z) * i_secondCountToIntegrate;
+			float magnitude = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z);
 
 			// Normalize the vector
-			float magnitude = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z);
 			eae6320::Math::sVector axisOfRotation_normalized = { angularVelocity.x / magnitude, angularVelocity.y / magnitude, angularVelocity.z / magnitude };
 
-			// Now you can create the quaternion
-			const auto rotation = eae6320::Math::cQuaternion(angleInRadians, axisOfRotation_normalized);
+			const auto rotation = eae6320::Math::cQuaternion(magnitude * i_secondCountToIntegrate, axisOfRotation_normalized);
 
-			gameObject->SetOrientation(rotation * gameObject->GetOrientation());
-			gameObject->SetOrientation(gameObject->GetOrientation().GetNormalized());
+			gameObject->SetOrientation((rotation * gameObject->GetOrientation()).GetNormalized());
 		}
 	}
 	// Update angular velocity
@@ -124,17 +121,15 @@ eae6320::Math::sVector ChrisZ::Physics::RigidBody::PredictFuturePosition(const f
 eae6320::Math::cQuaternion ChrisZ::Physics::RigidBody::PredictFutureOrientation(const float i_secondCountToExtrapolate) const
 {
 	// Check if angular velocity is zero
-	if (!(angularVelocity.x < VELOCITY_THRESHOLD && angularVelocity.y < VELOCITY_THRESHOLD && angularVelocity.z < VELOCITY_THRESHOLD))
+	if (!(abs(angularVelocity.x) < VELOCITY_THRESHOLD && abs(angularVelocity.y) < VELOCITY_THRESHOLD && abs(angularVelocity.z) < VELOCITY_THRESHOLD))
 	{
 		// Calculate the angle (magnitude of the vector)
-		float angleInRadians = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z) * i_secondCountToExtrapolate;
+		float magnitude = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z);
 
 		// Normalize the vector
-		float magnitude = sqrt(angularVelocity.x * angularVelocity.x + angularVelocity.y * angularVelocity.y + angularVelocity.z * angularVelocity.z);
 		eae6320::Math::sVector axisOfRotation_normalized = { angularVelocity.x / magnitude, angularVelocity.y / magnitude, angularVelocity.z / magnitude };
 
-		// Now you can create the quaternion
-		const auto rotation = eae6320::Math::cQuaternion(angleInRadians, axisOfRotation_normalized);
+		const auto rotation = eae6320::Math::cQuaternion(magnitude * i_secondCountToExtrapolate, axisOfRotation_normalized);
 
 		return eae6320::Math::cQuaternion(rotation * gameObject->GetOrientation()).GetNormalized();
 	}

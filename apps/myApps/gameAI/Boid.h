@@ -22,6 +22,7 @@ public:
 	void mouseDragged(int x, int y, int button) override;
 
 	// AI functions
+	void LookAt(const eae6320::Math::sVector i_direction);
 	eae6320::Math::sVector Seek(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Flee(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);

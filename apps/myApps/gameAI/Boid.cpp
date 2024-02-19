@@ -1,6 +1,9 @@
+#define _USE_MATH_DEFINES
+
 #include "Boid.h"
 
 #include <algorithm>
+#include <math.h>
 #include <ofMain.h>
 
 #include <Engine/CZPhysics/SphereCollider.h>
@@ -13,7 +16,7 @@ Boid::Boid()
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
 	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
 
-	m_rigidBody->SetDragCoefficient(0.0f);
+	m_rigidBody->SetDragCoefficient(0.5f);
 	m_rigidBody->SetRotationLocked(true, true, false);
 
 	target = this->GetPosition();
@@ -27,10 +30,10 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
 	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
 
-	m_rigidBody->SetDragCoefficient(0.0f);
+	m_rigidBody->SetDragCoefficient(0.5f);
 	m_rigidBody->SetRotationLocked(true, true, false);
 
-	m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, 1.0f));
+	//m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, -1.0f));
 
 	target = this->GetPosition();
 	player = i_player;
@@ -46,21 +49,9 @@ void Boid::Update(const float i_deltaTime)
 		velocity = velocity.GetNormalized() * maxSpeed;
 	}
 	m_rigidBody->SetVelocity(velocity);
-	
-	//cout << velocity.x << " " << velocity.y << " " << velocity.z << endl;
-
-	// Look where you're going
-	if (velocity.GetLength() > 0.0f)
-	{
-		// Use AddTorque to rotate the boid
-		eae6320::Math::sVector forward = velocity.GetNormalized();
-		eae6320::Math::sVector right = eae6320::Math::sVector(-forward.y, forward.x, 0.0f);
-		float dot = forward.x * right.y - forward.y * right.x;
-		float angle = std::acos(forward.x) * (forward.y < 0.0f ? -1.0f : 1.0f);
-		m_rigidBody->AddTorque(eae6320::Math::sVector(0.0f, 0.0f, dot * angle));
-	}
 
 	// AI
+	LookAt(velocity);
 	this->m_rigidBody->AddForce(Pursue(player));
 }
 
@@ -90,6 +81,13 @@ void Boid::mouseDragged(int x, int y, int button)
 }
 
 // AI functions
+
+void Boid::LookAt(const eae6320::Math::sVector i_direction)
+{
+	float angle = atan2(i_direction.y, i_direction.x);
+	this->SetOrientation(eae6320::Math::cQuaternion(-angle, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));	// Negative Z rotation because of the coordinate system
+}
+
 eae6320::Math::sVector Boid::Seek(const eae6320::Math::sVector i_target)
 {
 	eae6320::Math::sVector desiredVelocity = i_target - this->GetPosition();
