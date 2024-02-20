@@ -20,6 +20,24 @@ Boid::Boid()
 	m_rigidBody->SetRotationLocked(true, true, false);
 
 	target = this->GetPosition();
+
+	wanderAngle = ofRandom(0, 2 * M_PI);
+}
+
+Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, const ofColor i_color)
+{
+	this->SetPosition(eae6320::Math::sVector(i_xPosition, i_yPosition, 0.0f));
+	this->SetOrientation(eae6320::Math::cQuaternion(i_orientation, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+
+	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
+	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
+
+	m_rigidBody->SetDragCoefficient(0.5f);
+	m_rigidBody->SetRotationLocked(true, true, false);
+
+	target = this->GetPosition();
+
+	wanderAngle = ofRandom(0, 2 * M_PI);
 }
 
 Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, Player* i_player, const ofColor i_color) : color(i_color)
@@ -37,6 +55,27 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 
 	target = this->GetPosition();
 	player = i_player;
+
+	wanderAngle = ofRandom(0, 2 * M_PI);
+}
+
+Boid::Boid(std::vector<GameAIGameObject*>* i_boids, const ofColor i_color)
+{
+	this->SetPosition(eae6320::Math::sVector(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()), 0.0f));
+	this->SetOrientation(eae6320::Math::cQuaternion(ofRandom(0, 2 * M_PI), eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+
+	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
+	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
+
+	m_rigidBody->SetVelocity(eae6320::Math::sVector(ofRandom(-100, 100), ofRandom(-100, 100), 0.0f));
+
+	m_rigidBody->SetDragCoefficient(0.5f);
+	m_rigidBody->SetRotationLocked(true, true, false);
+
+	//m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, -1.0f));
+
+	target = this->GetPosition();
+	boids = i_boids;
 
 	wanderAngle = ofRandom(0, 2 * M_PI);
 }
@@ -60,8 +99,11 @@ void Boid::Update(const float i_deltaTime)
 	LookAt(velocity);
 	//this->m_rigidBody->AddForce(Arrive(target));
 	//this->m_rigidBody->AddForce(Evade(player));
-	this->m_rigidBody->AddForce(Wander());
-
+	//this->m_rigidBody->AddForce(Wander());
+	//this->m_rigidBody->AddForce(Align(*boids));
+	//this->m_rigidBody->AddForce(Cohesion(*boids));
+	//this->m_rigidBody->AddForce(Separation(*boids));
+	this->m_rigidBody->AddForce(Align(*boids) + Cohesion(*boids) + Separation(*boids) * 1.5);
 }
 
 void Boid::Draw()
@@ -71,13 +113,13 @@ void Boid::Draw()
 	ofSetColor(color);
 
 	// Draw the trace
-	for (int i = 0; i < trace.size(); i++)
-	{
-		ofDrawCircle(trace[i].x, trace[i].y, 1);
-	}
+	//for (int i = 0; i < trace.size(); i++)
+	//{
+	//	ofDrawCircle(trace[i].x, trace[i].y, 1);
+	//}
 
-	// This is for drawing the predicted position
-	ofDrawCircle(target.x, target.y, 5);
+	// Draw the target position
+	//ofDrawCircle(target.x, target.y, 5);
 
 	// Draw the circle
 	ofDrawCircle(position.x, position.y, 10);
@@ -256,4 +298,119 @@ eae6320::Math::sVector Boid::Wander()
 	// Finally, calculate and return the wander force
 	eae6320::Math::sVector wanderForce = circleCenter + displacement;
 	return wanderForce;
+}
+
+eae6320::Math::sVector Boid::Align(std::vector<GameAIGameObject*> i_boids)
+{
+	eae6320::Math::sVector averageVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	int boidsCount = 0;
+
+	for (int i = 0; i < i_boids.size(); i++)
+	{
+		if (i_boids[i] != this)
+		{
+			eae6320::Math::sVector distance = i_boids[i]->GetPosition() - this->GetPosition();
+
+			if (distance.GetLength() < perceptionRadius)
+			{
+				averageVelocity += i_boids[i]->GetRigidBody()->GetVelocity();
+				boidsCount++;
+			}
+		}
+	}
+
+	if (boidsCount > 0 && averageVelocity.GetLength() != 0.0f)
+	{
+		averageVelocity /= boidsCount;
+		averageVelocity = averageVelocity.GetNormalized() * maxSpeed;
+
+		eae6320::Math::sVector force = averageVelocity - m_rigidBody->GetVelocity();
+
+		// Limit the force
+		if (force.GetLength() > maxForce)
+		{
+			force = force.GetNormalized() * maxForce;
+		}
+
+		return force;
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
+}
+
+eae6320::Math::sVector Boid::Cohesion(std::vector<GameAIGameObject*> i_boids)
+{
+	eae6320::Math::sVector averagePosition = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	int boidsCount = 0;
+
+	for (int i = 0; i < i_boids.size(); i++)
+	{
+		if (i_boids[i] != this)
+		{
+			eae6320::Math::sVector distance = i_boids[i]->GetPosition() - this->GetPosition();
+
+			if (distance.GetLength() < perceptionRadius)
+			{
+				averagePosition += i_boids[i]->GetPosition();
+				boidsCount++;
+			}
+		}
+	}
+
+	if (boidsCount > 0)
+	{
+		averagePosition /= boidsCount;
+
+		return Seek(averagePosition);
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
+}
+
+eae6320::Math::sVector Boid::Separation(std::vector<GameAIGameObject*> i_boids)
+{
+	eae6320::Math::sVector force = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	int boidsCount = 0;
+
+	for (int i = 0; i < i_boids.size(); i++)
+	{
+		if (i_boids[i] != this)
+		{
+			eae6320::Math::sVector distance = i_boids[i]->GetPosition() - this->GetPosition();
+
+			if (distance.GetLength() < separationRadius)
+			{
+				eae6320::Math::sVector difference = this->GetPosition() - i_boids[i]->GetPosition();
+				float distance = difference.GetLength();
+
+				difference = distance != 0.0f ? difference.GetNormalized() / (distance * distance) : eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+				force += difference;
+				boidsCount++;
+			}
+		}
+	}
+
+	if (boidsCount > 0)
+	{
+		force /= boidsCount;
+		force = force.GetNormalized() * maxSpeed;
+
+		force -= m_rigidBody->GetVelocity();
+
+		// Limit the force
+		if (force.GetLength() > maxForce)
+		{
+			force = force.GetNormalized() * maxForce;
+		}
+
+		return force;
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
 }

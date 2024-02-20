@@ -12,7 +12,9 @@ class Boid : public GameAIGameObject
 {
 public:
 	Boid();
+	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, const ofColor i_color = ofColor::white);
 	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, Player* i_player, const ofColor i_color = ofColor::white);
+	Boid(std::vector<GameAIGameObject*>* i_boids, const ofColor i_color = ofColor::white);
 
 	void Update(const float i_deltaTime) override;
 
@@ -32,6 +34,9 @@ public:
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
 	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
 	eae6320::Math::sVector Wander();
+	eae6320::Math::sVector Align(std::vector<GameAIGameObject*> i_boids);
+	eae6320::Math::sVector Cohesion(std::vector<GameAIGameObject*> i_boids);
+	eae6320::Math::sVector Separation(std::vector<GameAIGameObject*> i_boids);
 
 private:
 	// Color of the boid
@@ -54,8 +59,13 @@ private:
 	const float wanderJitter = 0.5f; // Randomness to be added
 	float wanderAngle = 0.0f;
 
+	// Flocking parameters
+	const float perceptionRadius = 10000.0f;
+	const float separationRadius = 40.0f;
+
 	eae6320::Math::sVector target = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	Player* player = nullptr;
+	std::vector<GameAIGameObject*>* boids = nullptr;
 };
 
 #endif // GAMEAI_BOID_H_

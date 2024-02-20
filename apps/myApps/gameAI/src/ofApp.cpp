@@ -9,11 +9,16 @@
 void ofApp::setup(){
 	lastTime = ofGetElapsedTimef();
 
-	// Make player the first game object
-	gameObjects.push_back(new Player());
+	//// Make player the first game object
+	//gameObjects.push_back(new Player());
 
 	// Create some boids
-	gameObjects.push_back(new Boid(400.0f, 400.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
+	//gameObjects.push_back(new Boid(400.0f, 400.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
+
+	// Create some boids in random positions for flocking
+	for (int i = 0; i < 100; i++) {
+		gameObjects.push_back(new Boid(&gameObjects));
+	}
 }
 
 //--------------------------------------------------------------
