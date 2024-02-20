@@ -123,6 +123,8 @@ void Boid::Update(const float i_deltaTime)
 		this->m_rigidBody->AddForce(Evade(player)); break;
 	case eBoidState::WANDER:
 		this->m_rigidBody->AddForce(Wander()); break;
+	case eBoidState::WANDER2:
+		this->m_rigidBody->AddForce(Wander2()); break;
 	case eBoidState::FLOCK:
 		this->m_rigidBody->AddForce(Flock(*boids)); break;
 	}
@@ -368,6 +370,23 @@ eae6320::Math::sVector Boid::Wander()
 	// Finally, calculate and return the wander force
 	eae6320::Math::sVector wanderForce = circleCenter + displacement;
 	return wanderForce;
+}
+
+eae6320::Math::sVector Boid::Wander2()
+{
+	if ((target - this->GetPosition()).GetLength() < wanderAcceptanceRadius)
+	{
+		target = eae6320::Math::sVector(ofRandom(this->GetPosition().x - wanderRadius, this->GetPosition().x + wanderRadius), ofRandom(this->GetPosition().y - wanderRadius, this->GetPosition().y + wanderRadius), 0.0f);
+	}
+
+	if ((target - this->GetPosition()).GetLength() >= wanderAcceptanceRadius)
+	{
+		return Seek(target);
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
 }
 
 float Boid::GetWeight() const

@@ -32,6 +32,7 @@ class ofApp : public ofBaseApp{
 		void PursueDemo();
 		void EvadeDemo();
 		void WanderDemo();
+		void Wander2Demo();
 		void FlockingDemo();
 
 private:

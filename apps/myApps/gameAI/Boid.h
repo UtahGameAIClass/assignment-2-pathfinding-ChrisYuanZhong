@@ -17,6 +17,7 @@ enum class eBoidState
 	PURSUE,
 	EVADE,
 	WANDER,
+	WANDER2,
 	FLOCK
 };
 
@@ -47,6 +48,7 @@ public:
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
 	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
 	eae6320::Math::sVector Wander();
+	eae6320::Math::sVector Wander2();
 
 	// Flocking functions
 	float GetWeight() const;
@@ -82,6 +84,7 @@ private:
 	const float wanderDistance = 30.0f; // Distance for the wander circle
 	const float wanderJitter = 0.5f; // Randomness to be added
 	float wanderAngle = 0.0f;
+	float wanderAcceptanceRadius = 20.0f;
 
 	// Flocking parameters
 	const float perceptionRadius = 10000.0f;

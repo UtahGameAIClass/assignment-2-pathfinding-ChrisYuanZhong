@@ -39,10 +39,11 @@ void ofApp::draw(){
 	ofDrawBitmapString("4 - Flee: Flee from where the mouse clicks", 10, 80);
 	ofDrawBitmapString("5 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 100);
 	ofDrawBitmapString("6 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 120);
-	ofDrawBitmapString("7 - Wander: Wander around leaving a trace", 10, 140);
-	ofDrawBitmapString("8 - Flocking: Flocking with the red leader", 10, 160);
-	ofDrawBitmapString("Press the number to change the demonstration", 10, 180);
-	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 200);
+	ofDrawBitmapString("7 - Wander: Wander around leaving a trace (Designed by Craig)", 10, 140);
+	ofDrawBitmapString("8 - Wander2: Wander to a random target (Designed by me)", 10, 160);
+	ofDrawBitmapString("9 - Flocking: Flocking with the red leader", 10, 180);
+	ofDrawBitmapString("Press the number to change the demonstration", 10, 200);
+	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 220);
 }
 
 //--------------------------------------------------------------
@@ -81,6 +82,10 @@ void ofApp::keyPressed(int key){
 			WanderDemo();
 			break;
 		case '8':
+			ClearGameObjects();
+			Wander2Demo();
+			break;
+		case '9':
 			ClearGameObjects();
 			FlockingDemo();
 			break;
@@ -226,6 +231,15 @@ void ofApp::WanderDemo()
 {
 	// Create a boid
 	Boid* boid = new Boid(400.0f, 400.0f, 0.0f, eBoidState::WANDER);
+
+	// Add the boid to the game objects
+	gameObjects.push_back(boid);
+}
+
+void ofApp::Wander2Demo()
+{
+	// Create a boid
+	Boid* boid = new Boid(400.0f, 400.0f, 0.0f, eBoidState::WANDER2);
 
 	// Add the boid to the game objects
 	gameObjects.push_back(boid);
