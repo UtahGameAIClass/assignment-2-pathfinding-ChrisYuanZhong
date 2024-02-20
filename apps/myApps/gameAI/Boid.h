@@ -69,7 +69,7 @@ private:
 	const float separationRadius = 40.0f;
 	const float alignMultiplier = 0.5f;
 	const float cohesionMultiplier = 1.5f;
-	const float separationMultiplier = 2.0f;
+	const float separationMultiplier = 1.5f;
 	const float leaderMultiplier = 10.0f;
 
 	float weight = 1.0f;

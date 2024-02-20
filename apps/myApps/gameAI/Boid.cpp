@@ -415,13 +415,13 @@ eae6320::Math::sVector Boid::Separation(std::vector<GameAIGameObject*> i_boids)
 				float distance = difference.GetLength();
 
 				difference = distance != 0.0f ? difference.GetNormalized() / (distance * distance) : eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-				force += difference;
-				boidsCount++;
+				force += difference * dynamic_cast<Boid*>(i_boids[i])->GetWeight();
+				boidsCount += dynamic_cast<Boid*>(i_boids[i])->GetWeight();
 			}
 		}
 	}
 
-	if (boidsCount > 0)
+	if (boidsCount > 0 && force.GetLength() != 0.0f)
 	{
 		force /= boidsCount;
 		force = force.GetNormalized() * maxSpeed;
