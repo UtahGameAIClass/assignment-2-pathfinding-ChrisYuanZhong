@@ -27,6 +27,7 @@ class ofApp : public ofBaseApp{
 		void ClearGameObjects();
 		void SeekDemo();
 		void ArriveDemo();
+		void AdvancedArriveDemo();
 		void FleeDemo();
 		void PursueDemo();
 		void EvadeDemo();

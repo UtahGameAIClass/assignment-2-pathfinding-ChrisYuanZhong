@@ -113,6 +113,8 @@ void Boid::Update(const float i_deltaTime)
 		this->m_rigidBody->AddForce(Seek(target)); break;
 	case eBoidState::ARRIVE:
 		this->m_rigidBody->AddForce(Arrive(target)); break;
+	case eBoidState::ADVANCED_ARRIVE:
+		this->m_rigidBody->AddForce(AdvancedArrive(target)); break;
 	case eBoidState::FLEE:
 		this->m_rigidBody->AddForce(Flee(target)); break;
 	case eBoidState::PURSUE:
@@ -243,6 +245,47 @@ eae6320::Math::sVector Boid::Arrive(const eae6320::Math::sVector i_target)
 			desiredVelocity = desiredVelocity.GetNormalized() * maxSpeed;
 		}
 
+		eae6320::Math::sVector force = desiredVelocity - m_rigidBody->GetVelocity();
+
+		// Limit the force
+		if (force.GetLength() > maxForce)
+		{
+			force = force.GetNormalized() * maxForce;
+		}
+
+		return force;
+	}
+	else
+	{
+		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
+	}
+}
+
+eae6320::Math::sVector Boid::AdvancedArrive(const eae6320::Math::sVector i_target)
+{
+	eae6320::Math::sVector desiredVelocity = i_target - this->GetPosition();
+	float distance = desiredVelocity.GetLength();
+
+	if (distance > 0.0f)
+	{
+		float speed;
+		if (distance > slowRadius)
+		{
+			speed = maxSpeed;
+		}
+		else if (distance > stopRadius)
+		{
+			speed = maxSpeed * (distance - stopRadius) / (slowRadius - stopRadius);
+		}
+		else
+		{
+			speed = 0.0f;
+		}
+
+		// Calculate the desired velocity
+		desiredVelocity *= speed / distance;
+
+		// Calculate the force
 		eae6320::Math::sVector force = desiredVelocity - m_rigidBody->GetVelocity();
 
 		// Limit the force

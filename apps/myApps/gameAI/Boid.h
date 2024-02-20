@@ -12,6 +12,7 @@ enum class eBoidState
 {
 	SEEK,
 	ARRIVE,
+	ADVANCED_ARRIVE,
 	FLEE,
 	PURSUE,
 	EVADE,
@@ -41,6 +42,7 @@ public:
 	void LookAt(const eae6320::Math::sVector i_direction);
 	eae6320::Math::sVector Seek(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Arrive(const eae6320::Math::sVector i_target);
+	eae6320::Math::sVector AdvancedArrive(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Flee(const eae6320::Math::sVector i_target);
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
 	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
@@ -73,6 +75,7 @@ private:
 	
 	// Arrive parameters
 	const float slowRadius = 100.0f;
+	const float stopRadius = 50.0f;
 
 	// Wander parameters
 	const float wanderRadius = 100.0f; // Radius for the wander circle

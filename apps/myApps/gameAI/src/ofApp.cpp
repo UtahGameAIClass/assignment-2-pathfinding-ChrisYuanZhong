@@ -35,14 +35,14 @@ void ofApp::draw(){
 	// Show the demonstration name
 	ofDrawBitmapString("1 - Seek: Seek where the mouse clicks", 10, 20);
 	ofDrawBitmapString("2 - Arrive: Arrive where the mouse clicks", 10, 40);
-	ofDrawBitmapString("3 - Flee: Seek where the mouse clicks", 10, 60);
-	ofDrawBitmapString("4 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 80);
-	ofDrawBitmapString("5 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 100);
-	ofDrawBitmapString("6 - Wander: Wander around leaving a trace", 10, 120);
-	ofDrawBitmapString("7 - Flocking: Flocking with the red leader", 10, 140);
-	ofDrawBitmapString("Press the number to change the demonstration", 10, 160);
-	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 180);
-
+	ofDrawBitmapString("3 - AdvancedArrive: Arrive better where the mouse clicks", 10, 60);
+	ofDrawBitmapString("4 - Flee: Flee from where the mouse clicks", 10, 80);
+	ofDrawBitmapString("5 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 100);
+	ofDrawBitmapString("6 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 120);
+	ofDrawBitmapString("7 - Wander: Wander around leaving a trace", 10, 140);
+	ofDrawBitmapString("8 - Flocking: Flocking with the red leader", 10, 160);
+	ofDrawBitmapString("Press the number to change the demonstration", 10, 180);
+	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 200);
 }
 
 //--------------------------------------------------------------
@@ -62,21 +62,25 @@ void ofApp::keyPressed(int key){
 			break;
 		case '3':
 			ClearGameObjects();
-			FleeDemo();
+			AdvancedArriveDemo();
 			break;
 		case '4':
 			ClearGameObjects();
-			PursueDemo();
+			FleeDemo();
 			break;
 		case '5':
 			ClearGameObjects();
-			EvadeDemo();
+			PursueDemo();
 			break;
 		case '6':
 			ClearGameObjects();
-			WanderDemo();
+			EvadeDemo();
 			break;
 		case '7':
+			ClearGameObjects();
+			WanderDemo();
+			break;
+		case '8':
 			ClearGameObjects();
 			FlockingDemo();
 			break;
@@ -173,6 +177,16 @@ void ofApp::ArriveDemo()
 
 	// Add the boid to the game objects
 	gameObjects.push_back(boid);
+}
+
+void ofApp::AdvancedArriveDemo()
+{
+	// Create a boid
+	Boid* boid = new Boid(400.0f, 400.0f, 0.0f, eBoidState::ADVANCED_ARRIVE);
+
+	// Add the boid to the game objects
+	gameObjects.push_back(boid);
+
 }
 
 void ofApp::FleeDemo()
