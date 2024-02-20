@@ -8,12 +8,23 @@
 #include "GameAIGameObject.h"
 #include "Player.h"
 
+enum class eBoidState
+{
+	SEEK,
+	ARRIVE,
+	FLEE,
+	PURSUE,
+	EVADE,
+	WANDER,
+	FLOCK
+};
+
 class Boid : public GameAIGameObject
 {
 public:
 	Boid();
-	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, const ofColor i_color = ofColor::white);
-	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, Player* i_player, const ofColor i_color = ofColor::white);
+	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, eBoidState i_state, const ofColor i_color = ofColor::white);
+	Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, eBoidState i_state, Player* i_player, const ofColor i_color = ofColor::white);
 	Boid(std::vector<GameAIGameObject*>* i_boids, const ofColor i_color = ofColor::white);
 
 	void Update(const float i_deltaTime) override;
@@ -36,7 +47,6 @@ public:
 	eae6320::Math::sVector Wander();
 
 	// Flocking functions
-	bool IsLeader() const;
 	float GetWeight() const;
 	eae6320::Math::sVector Align(std::vector<GameAIGameObject*> i_boids);
 	eae6320::Math::sVector Cohesion(std::vector<GameAIGameObject*> i_boids);
@@ -46,6 +56,12 @@ public:
 private:
 	// Color of the boid
 	ofColor color = ofColor::white;
+
+	// AI state
+	eBoidState state = eBoidState::WANDER;
+
+	Player* player = nullptr;
+	std::vector<GameAIGameObject*>* boids = nullptr;
 
 	std::vector<eae6320::Math::sVector> trace;
 
@@ -69,14 +85,12 @@ private:
 	const float separationRadius = 40.0f;
 	const float alignMultiplier = 0.5f;
 	const float cohesionMultiplier = 1.5f;
-	const float separationMultiplier = 1.5f;
+	const float separationMultiplier = 2.0f;
 	const float leaderMultiplier = 10.0f;
 
 	float weight = 1.0f;
 
 	eae6320::Math::sVector target = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
-	Player* player = nullptr;
-	std::vector<GameAIGameObject*>* boids = nullptr;
 };
 
 #endif // GAMEAI_BOID_H_

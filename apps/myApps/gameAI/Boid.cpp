@@ -24,10 +24,11 @@ Boid::Boid()
 	wanderAngle = ofRandom(0, 2 * M_PI);
 }
 
-Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, const ofColor i_color)
+Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, eBoidState i_state, const ofColor i_color)
 {
 	this->SetPosition(eae6320::Math::sVector(i_xPosition, i_yPosition, 0.0f));
 	this->SetOrientation(eae6320::Math::cQuaternion(i_orientation, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+	this->state = i_state;
 	this->color = i_color;
 	if (i_color == ofColor::red)
 	{
@@ -45,10 +46,11 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 	wanderAngle = ofRandom(0, 2 * M_PI);
 }
 
-Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, Player* i_player, const ofColor i_color) : color(i_color)
+Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orientation, eBoidState i_state, Player* i_player, const ofColor i_color) : color(i_color)
 {
 	this->SetPosition(eae6320::Math::sVector(i_xPosition, i_yPosition, 0.0f));
 	this->SetOrientation(eae6320::Math::cQuaternion(i_orientation, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+	this->state = i_state;
 	this->color = i_color;
 
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
@@ -56,8 +58,6 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 
 	m_rigidBody->SetDragCoefficient(0.5f);
 	m_rigidBody->SetRotationLocked(true, true, false);
-
-	//m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, -1.0f));
 
 	target = this->GetPosition();
 	player = i_player;
@@ -79,12 +79,14 @@ Boid::Boid(std::vector<GameAIGameObject*>* i_boids, const ofColor i_color)
 	m_rigidBody->SetDragCoefficient(0.5f);
 	m_rigidBody->SetRotationLocked(true, true, false);
 
-	//m_rigidBody->SetAngularVelocity(eae6320::Math::sVector(0.0f, 0.0f, -1.0f));
 
 	target = this->GetPosition();
 	boids = i_boids;
 
 	wanderAngle = ofRandom(0, 2 * M_PI);
+
+	// This constructor is for flocking
+	state = eBoidState::FLOCK;
 }
 
 void Boid::Update(const float i_deltaTime)
@@ -104,20 +106,23 @@ void Boid::Update(const float i_deltaTime)
 
 	// AI
 	LookAt(velocity);
-	//this->m_rigidBody->AddForce(Arrive(target));
-	//this->m_rigidBody->AddForce(Evade(player));
-	//this->m_rigidBody->AddForce(Wander());
-	//this->m_rigidBody->AddForce(Align(*boids));
-	//this->m_rigidBody->AddForce(Cohesion(*boids));
-	//this->m_rigidBody->AddForce(Separation(*boids));
 
-	if (IsLeader())
+	switch (state)
 	{
-		this->m_rigidBody->AddForce(Wander());
-	}
-	else
-	{
-		this->m_rigidBody->AddForce(Flock(*boids));
+	case eBoidState::SEEK:
+		this->m_rigidBody->AddForce(Seek(target)); break;
+	case eBoidState::ARRIVE:
+		this->m_rigidBody->AddForce(Arrive(target)); break;
+	case eBoidState::FLEE:
+		this->m_rigidBody->AddForce(Flee(target)); break;
+	case eBoidState::PURSUE:
+		this->m_rigidBody->AddForce(Pursue(player)); break;
+	case eBoidState::EVADE:
+		this->m_rigidBody->AddForce(Evade(player)); break;
+	case eBoidState::WANDER:
+		this->m_rigidBody->AddForce(Wander()); break;
+	case eBoidState::FLOCK:
+		this->m_rigidBody->AddForce(Flock(*boids)); break;
 	}
 }
 
@@ -128,13 +133,18 @@ void Boid::Draw()
 	ofSetColor(color);
 
 	// Draw the trace
-	//for (int i = 0; i < trace.size(); i++)
-	//{
-	//	ofDrawCircle(trace[i].x, trace[i].y, 1);
-	//}
-
-	// Draw the target position
-	ofDrawCircle(target.x, target.y, 5);
+	if (state == eBoidState::WANDER)
+	{
+		for (int i = 0; i < trace.size(); i++)
+		{
+			ofDrawCircle(trace[i].x, trace[i].y, 1);
+		}
+	}
+	else
+	{
+		// Draw the target position
+		ofDrawCircle(target.x, target.y, 5);
+	}
 
 	// Draw the circle
 	ofDrawCircle(position.x, position.y, 10);
@@ -315,11 +325,6 @@ eae6320::Math::sVector Boid::Wander()
 	// Finally, calculate and return the wander force
 	eae6320::Math::sVector wanderForce = circleCenter + displacement;
 	return wanderForce;
-}
-
-bool Boid::IsLeader() const
-{
-	return this->color == ofColor::red;
 }
 
 float Boid::GetWeight() const

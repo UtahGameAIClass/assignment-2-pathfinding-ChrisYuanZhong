@@ -23,6 +23,16 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 	
+		// AI Behavior Demonstrations
+		void ClearGameObjects();
+		void SeekDemo();
+		void ArriveDemo();
+		void FleeDemo();
+		void PursueDemo();
+		void EvadeDemo();
+		void WanderDemo();
+		void FlockingDemo();
+
 private:
 	float lastTime;
 
