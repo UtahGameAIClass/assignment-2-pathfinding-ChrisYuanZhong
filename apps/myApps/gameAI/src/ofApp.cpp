@@ -38,7 +38,7 @@ void ofApp::draw(){
 	ofDrawBitmapString("3 - Flee: Seek where the mouse clicks", 10, 60);
 	ofDrawBitmapString("4 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 80);
 	ofDrawBitmapString("5 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 100);
-	ofDrawBitmapString("6 - Wander", 10, 120);
+	ofDrawBitmapString("6 - Wander: Wander around leaving a trace", 10, 120);
 	ofDrawBitmapString("7 - Flocking: Flocking with the red leader", 10, 140);
 	ofDrawBitmapString("Press the number to change the demonstration", 10, 160);
 	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 180);
