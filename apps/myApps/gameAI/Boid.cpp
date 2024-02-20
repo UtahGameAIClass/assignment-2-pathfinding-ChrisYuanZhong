@@ -137,17 +137,17 @@ void Boid::Draw()
 	ofSetColor(color);
 
 	// Draw the trace
-	if (state == eBoidState::WANDER)
+	if (state != eBoidState::WANDER)
+	{
+		// Draw the target position
+		ofDrawCircle(target.x, target.y, 5);
+	}
+	if (state == eBoidState::WANDER || state == eBoidState::WANDER2)
 	{
 		for (int i = 0; i < trace.size(); i++)
 		{
 			ofDrawCircle(trace[i].x, trace[i].y, 1);
 		}
-	}
-	else
-	{
-		// Draw the target position
-		ofDrawCircle(target.x, target.y, 5);
 	}
 
 	// Draw the circle
@@ -163,27 +163,39 @@ void Boid::Draw()
 
 void Boid::WrapAround()
 {
+	bool bHasWrapped = false;
+
 	eae6320::Math::sVector position = this->GetPosition();
 
 	if (position.x < 0)
 	{
 		position.x = ofGetWidth();
+		bHasWrapped = true;
 	}
 	else if (position.x > ofGetWidth())
 	{
 		position.x = 0;
+		bHasWrapped = true;
 	}
 
 	if (position.y < 0)
 	{
 		position.y = ofGetHeight();
+		bHasWrapped = true;
 	}
 	else if (position.y > ofGetHeight())
 	{
 		position.y = 0;
+		bHasWrapped = true;
 	}
 
 	this->SetPosition(position);
+
+	// Reset the target for Wander2
+	if (bHasWrapped && state == eBoidState::WANDER2)
+	{
+		target = eae6320::Math::sVector(ofRandom(this->GetPosition().x - wanderRadius, this->GetPosition().x + wanderRadius), ofRandom(this->GetPosition().y - wanderRadius, this->GetPosition().y + wanderRadius), 0.0f);
+	}
 }
 
 void Boid::mousePressed(int x, int y, int button)
