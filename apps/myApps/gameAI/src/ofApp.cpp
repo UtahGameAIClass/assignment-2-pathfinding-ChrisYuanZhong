@@ -12,11 +12,14 @@ void ofApp::setup(){
 	//// Make player the first game object
 	//gameObjects.push_back(new Player());
 
+	// Create a leader boid
+	gameObjects.push_back(new Boid(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()), ofRandom(0, 6.28), ofColor::red));
+
 	// Create some boids
 	//gameObjects.push_back(new Boid(400.0f, 400.0f, 0.0f, dynamic_cast<Player*>(gameObjects[0])));
 
 	// Create some boids in random positions for flocking
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10; i++) {
 		gameObjects.push_back(new Boid(&gameObjects));
 	}
 }

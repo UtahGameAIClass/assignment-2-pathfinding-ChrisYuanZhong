@@ -34,9 +34,14 @@ public:
 	eae6320::Math::sVector Pursue(GameAIGameObject* i_target);
 	eae6320::Math::sVector Evade(GameAIGameObject* i_target);
 	eae6320::Math::sVector Wander();
+
+	// Flocking functions
+	bool IsLeader() const;
+	float GetWeight() const;
 	eae6320::Math::sVector Align(std::vector<GameAIGameObject*> i_boids);
 	eae6320::Math::sVector Cohesion(std::vector<GameAIGameObject*> i_boids);
 	eae6320::Math::sVector Separation(std::vector<GameAIGameObject*> i_boids);
+	eae6320::Math::sVector Flock(std::vector<GameAIGameObject*> i_boids);
 
 private:
 	// Color of the boid
@@ -45,7 +50,7 @@ private:
 	std::vector<eae6320::Math::sVector> trace;
 
 	// AI variables
-	const float maxSpeed = 200.0f;
+	const float maxSpeed = 150.0f;
 	const float maxForce = 300.0f;
 
 	const float evadeRadius = 2000.0f;
@@ -62,6 +67,12 @@ private:
 	// Flocking parameters
 	const float perceptionRadius = 10000.0f;
 	const float separationRadius = 40.0f;
+	const float alignMultiplier = 0.5f;
+	const float cohesionMultiplier = 1.5f;
+	const float separationMultiplier = 2.0f;
+	const float leaderMultiplier = 10.0f;
+
+	float weight = 1.0f;
 
 	eae6320::Math::sVector target = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	Player* player = nullptr;

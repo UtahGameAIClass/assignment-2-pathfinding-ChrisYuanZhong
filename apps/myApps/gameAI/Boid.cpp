@@ -28,6 +28,11 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 {
 	this->SetPosition(eae6320::Math::sVector(i_xPosition, i_yPosition, 0.0f));
 	this->SetOrientation(eae6320::Math::cQuaternion(i_orientation, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+	this->color = i_color;
+	if (i_color == ofColor::red)
+	{
+		this->weight = leaderMultiplier;
+	}
 
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
 	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
@@ -44,6 +49,7 @@ Boid::Boid(const float i_xPosition, const float i_yPosition, const float i_orien
 {
 	this->SetPosition(eae6320::Math::sVector(i_xPosition, i_yPosition, 0.0f));
 	this->SetOrientation(eae6320::Math::cQuaternion(i_orientation, eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+	this->color = i_color;
 
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
 	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
@@ -63,6 +69,7 @@ Boid::Boid(std::vector<GameAIGameObject*>* i_boids, const ofColor i_color)
 {
 	this->SetPosition(eae6320::Math::sVector(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()), 0.0f));
 	this->SetOrientation(eae6320::Math::cQuaternion(ofRandom(0, 2 * M_PI), eae6320::Math::sVector(0.0f, 0.0f, 1.0f)));
+	this->color = i_color;
 
 	m_rigidBody = new ChrisZ::Physics::RigidBody(this);
 	m_collider = new ChrisZ::Physics::SphereCollider(eae6320::Math::sVector(0.0f, 0.0f, 0.0f), 10.0f, this);
@@ -103,7 +110,15 @@ void Boid::Update(const float i_deltaTime)
 	//this->m_rigidBody->AddForce(Align(*boids));
 	//this->m_rigidBody->AddForce(Cohesion(*boids));
 	//this->m_rigidBody->AddForce(Separation(*boids));
-	this->m_rigidBody->AddForce(Align(*boids) + Cohesion(*boids) + Separation(*boids) * 1.5);
+
+	if (IsLeader())
+	{
+		this->m_rigidBody->AddForce(Wander());
+	}
+	else
+	{
+		this->m_rigidBody->AddForce(Flock(*boids));
+	}
 }
 
 void Boid::Draw()
@@ -119,7 +134,7 @@ void Boid::Draw()
 	//}
 
 	// Draw the target position
-	//ofDrawCircle(target.x, target.y, 5);
+	ofDrawCircle(target.x, target.y, 5);
 
 	// Draw the circle
 	ofDrawCircle(position.x, position.y, 10);
@@ -177,6 +192,8 @@ void Boid::LookAt(const eae6320::Math::sVector i_direction)
 
 eae6320::Math::sVector Boid::Seek(const eae6320::Math::sVector i_target)
 {
+	this->target = i_target;
+
 	eae6320::Math::sVector desiredVelocity = i_target - this->GetPosition();
 
 	if (desiredVelocity.GetLength() != 0.0f)
@@ -300,6 +317,16 @@ eae6320::Math::sVector Boid::Wander()
 	return wanderForce;
 }
 
+bool Boid::IsLeader() const
+{
+	return this->color == ofColor::red;
+}
+
+float Boid::GetWeight() const
+{
+	return weight;
+}
+
 eae6320::Math::sVector Boid::Align(std::vector<GameAIGameObject*> i_boids)
 {
 	eae6320::Math::sVector averageVelocity = eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
@@ -313,8 +340,8 @@ eae6320::Math::sVector Boid::Align(std::vector<GameAIGameObject*> i_boids)
 
 			if (distance.GetLength() < perceptionRadius)
 			{
-				averageVelocity += i_boids[i]->GetRigidBody()->GetVelocity();
-				boidsCount++;
+				averageVelocity += i_boids[i]->GetRigidBody()->GetVelocity() * dynamic_cast<Boid*>(i_boids[i])->GetWeight();
+				boidsCount += dynamic_cast<Boid*>(i_boids[i])->GetWeight();
 			}
 		}
 	}
@@ -353,8 +380,8 @@ eae6320::Math::sVector Boid::Cohesion(std::vector<GameAIGameObject*> i_boids)
 
 			if (distance.GetLength() < perceptionRadius)
 			{
-				averagePosition += i_boids[i]->GetPosition();
-				boidsCount++;
+				averagePosition += i_boids[i]->GetPosition() * dynamic_cast<Boid*>(i_boids[i])->GetWeight();
+				boidsCount += dynamic_cast<Boid*>(i_boids[i])->GetWeight();
 			}
 		}
 	}
@@ -413,4 +440,9 @@ eae6320::Math::sVector Boid::Separation(std::vector<GameAIGameObject*> i_boids)
 	{
 		return eae6320::Math::sVector(0.0f, 0.0f, 0.0f);
 	}
+}
+
+eae6320::Math::sVector Boid::Flock(std::vector<GameAIGameObject*> i_boids)
+{
+	return Align(i_boids) * alignMultiplier + Cohesion(i_boids) * cohesionMultiplier + Separation(i_boids) * separationMultiplier;
 }
