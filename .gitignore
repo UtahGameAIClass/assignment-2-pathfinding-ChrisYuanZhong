@@ -92,7 +92,6 @@ Desktop.ini
 
 # Static library
 *.lib
-!cairo-static.lib
 
 # The example folder
 examples/
