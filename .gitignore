@@ -90,9 +90,8 @@ Desktop.ini
 # Archive files
 *.a
 
-# Static library
-*.lib
-!cairo-static.lib
+# Lib files that are larger than 100MB
+openframeworksLib_debug.lib
 
 # The example folder
 examples/
