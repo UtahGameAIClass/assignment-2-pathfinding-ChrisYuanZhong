@@ -84,6 +84,15 @@ Desktop.ini
 .vs/*
 .vs
 
+# Executable
+*.exe
 
+# Archive files
+*.a
 
+# Lib files that are larger than 100MB
+openframeworksLib_debug.lib
+openframeworksLib_release.lib
 
+# The example folder
+examples/
