@@ -1,85 +1,60 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/_C6YKQv8)
-# EAE6610: Assignment1-MovementAI
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/1Bemuyfd)
+# EAE6610: Assignment2-PathFinding
 
 ## Instructions
-Your task for this assignment is to explore various movement algorithms. Using [openFrameworks](https://openframeworks.cc), you will implement various Dynamic Movement algorithms and be able to appreciate their performance. You will submit your code via [our Github Classroom portal](https://classroom.github.com/classrooms/156158200-sp24-classroom) by ensuring that your code is **pushed to your repository by the assignment deadline**. You will also hand in a 1 to 2-page [process letter](#About-Ungrading-and-Process-Letters) placed in the top-level directory of your git repository.
+Your task for this assignment is to explore some of the pathfinding algorithms we discussed in class. Working alone and using openFrameworks (http://openframeworks.cc), your task is to implement the algorithms described below and analyze your results in a 3-5 page writeup. Note that for some of these tasks, you will be integrating your new solutions with your code from Assignment 1. You will submit your code via [our Github Classroom portal] by ensuring that your code is **pushed to your repository by the assignment deadline**. You will also hand in a 1 to 2-page [process letter](#About-Ungrading-and-Process-Letters) placed in the top-level directory of your git repository.
+
+You are expected to follow Google’s C++ Style Guide for your code. It is available here: https://google.github.io/styleguide/cppguide.html
 
 This is an individual assignment; you are to work alone. As always, you are expected to abide by the University of Utah Code of Conduct, explicitly outlined in the class syllabus, which includes providing appropriate attribution for all external sources of information consulted while working on this assignment.
 
 ### Overview
 1. [Setup](#Setup)
 2. [Assignment Deliverables](#assignment-deliverables)
-    1. [First Steps](#first-steps)
-    2. [Kinematic Motion](#kinematic-motion)
-    3. [Dynamic Steering Behaviours](#dynamic-steering-behaviours)
-    4. [Wander Steering Behaviours](#wander-steering-behaviours)
-    5. [Flocking Behavior and Blending](#flocking-behavior-and-blending)
-    6. [Process Letter](#process-letter)
+    1. [First Steps](#first-steps15-points)
+    2. [Dijkstra’s Algorithm, A*](#dijkstras-algorithm-a-25-points)
+    3. [Heuristics](#heuristics-05-points)
+    4. [Putting It All Together](#putting-it-all-together-4-points)
+    5. [Process Letter](#process-letter)
 
 ### Setup
-Before you are able to get started with the assignment, go to [SETUP.md](SETUP.md) and configure your working environment. Once you have done that, return to this file.
+Before you are able to get started with the assignment, go to [SETUP.md](SETUP.md) and configure your working environment. Also, add the Assignment 1 project into this repository to continue working on top of that for the Assignment 2.
 
 ### Assignment Deliverables
 
-#### First Steps
-You should begin by familiarizing yourself with [openFrameworks](http://openframeworks.cc). openFrameworks is "an open source C++ toolkit designed to assist the creative process by providing a simple and intuitive framework for experimentation."
+#### First Steps(1.5 Points)
+Create two graphs that you will use for your experiments. Both graphs should be a weighted singly-connected digraph. Remember, only use positive weights.
 
-For your first steps, draw a circle and triangle to the screen to make the shape depicted below.
-Make sure your shape is sufficiently small relative to the canvas size so that when you begin moving it around the screen it has a place to go.
+Your first graph should represent something meaningful in the world. Perhaps a roadmap of Salt Lake City or your hometown, the EAE building, etc. Your choice of what you represent is up to you; read ahead to figure out how to maximize your work effort. This graph should be large enough so that you can learn some interesting things about the algorithms, but small enough to enable efficient computation in your experiments. As a rule of thumb, 10 vertices is probably too few, but 50 is likely too many.
 
-![Screenshot of a Boid: a black circle with a black triangle overlain, where one of the triangle's tips points to the east.](/README/boid.png)
+Your second graph should be designed to test the limits of the algorithms. It should be Very Big™. You can generate it randomly, find a graph somewhere on the internet (make sure you cite where), or try to generate it using some data set of your choosing. One thing is for sure: you should not author this graph by hand. As a rule of thumb, you should be targeting graphs with thousands or tens-of-thousands of vertices and edges. In your writeup, include a description of both graphs. What does the first one represent? How did you create the second one?
 
-A Boid.
+#### Dijkstra’s Algorithm, A* (2.5 Points)
+Your next task is to implement both Dijkstra’s Algorithm and the A* Algorithm. I suggest you get them both working on your first graph before you begin testing on your second graph. For A*, pick a simple heuristic like a constant guess or some form of Manhattan Distance. If your large graph doesn’t have any meaningful distance or way to compute a heuristic, use a random one or constant guess. What you choose isn’t too important for this section of the assignment.
 
-#### Kinematic Motion
-Create a Rigidbody data structure like the one we discussed in class.  Make sure you include methods for getting the new orientation from direction and for updating position. Make sure to leave breadcrumbs as your shape traverses the screen.
+Compare and contrast the performance of the two algorithms on both of your graphs in terms of runtime, number of nodes visited, and memory used. What else can you say about these algorithms? What effects does the graph structure have on performance? You are expected to present data in your writeup to support your analysis.
 
-Using kinematic motion (i.e., velocity-based movement), have your shape start at the bottom left corner of the screen and traverse around the edge until it returns to its starting location. 
+#### Heuristics (0.5 Points) 
+Looking solely at the A* algorithm, design and implement at least two heuristics for your first graph. The heuristics you used in the previous portion of the assignment can count as one of these two. A few options are: random, hand-authored, Manhattan distance, constant guess, or Euclidian distance. These are not the only possibilities; consider others! These heuristics need not work on your second, larger graph.
 
-> [!TIP]
-> If it would help, you could include a screenshot of your shape and the breadcrumbs after it completes its tour for inclusion in your [process letter](#process-letter).
+Describe each of your heuristics in detail. Is it admissible? Consistent? Overestimating? Underestimating? What happens to the performance of the A* algorithm when you use different heuristics? Again, present data in your writeup to support your analysis.
 
-#### Dynamic Steering Behaviours 
-First, implement the Dynamic Seek algorithm we covered in class. Have your shape seek the location of mouse clicks. Make sure your shape is oriented in the direction of travel. Recall that you can accomplish this by implementing an orientation matching steering behavior. 
-
-> [!TIP]
-> You can implement mouse clicks by using openFramework’s [`mousePressed(...)`](https://openframeworks.cc/documentation/application/ofBaseApp/#show_mousePressed) method.
-
-Next, test out at least two different methods for implementing arriving. 
+#### Putting It All Together (4 Points)
+Combine your pathfinding algorithms with the appropriate algorithms from Homework 1. Design an “indoor environment” that contains a number of obstacles for your character to avoid. Using a principled technique of your choosing (i.e. a division scheme we discuss in class or a set of rules you use to represent the space manually), create a graph representation of that environment and use it to perform pathfinding. You should be able to click anywhere in the window, have that click location be quantized into the graph and have your A* algorithm compute an efficient path to that location. Have your character follow the computed path.
 
 > [!TIP]
-> Things you may want to ask yourself as you draft your process letter: which arrival method looks better? why? which is more successful? why? (and again, if it would help, it is probably a good idea to take a series of screenshots to illustrate your results).
-
-#### Wander Steering Behaviours  
-First, implement the wander algorithm we covered in class. Make sure your shape is oriented in the direction of travel and to handle window boundary violations gracefully.  
-
-> [!TIP]
-> While there are many ways to handle boundary violations, one way to do it is implementing a "toroidal" map (a 2D wrap around the world).
-
-Next, implement at least two different methods for changing orientation. 
-
-> [!TIP]
-> Things you may want to ask yourself as you draft your process letter: which method for changing wandering orientation looks better? why? (and again, if it would help, it is probably a good idea to take a series of screenshots to illustrate your results.
-
-#### Flocking Behavior and Blending
-Using multiple independent shapes, implement flocking behavior. Elect one of your shapes as a leader and have them wander the screen. 
-
-> [!WARNING]
-> You must make clear which Boid is the leader. For example, you might draw it in a different color or change its shape.
-
-Let every other shape seek the leader, avoid collisions, and seek the center-of-mass of the flock (or some subset). You may additionally implement other steering behaviors of your choosing, or invent your own. 
-
-> [!TIP]
-> Things you may want to ask yourself as you draft your process letter: what did you observe during implementation? did you have to make any changes to the algorithms to make flocking work? Did you experiment with more or fewer followers? Are things easier or harder with more followers? What happens if you have two wanderers and followers follow the closest wanderer? (and again, if it would help, it is probably a good idea to take a series of screenshots to illustrate your results.
+> Although more computationally intensive, having a dense graph can avoid the need for obstacle avoidance in your movement. Videos or screenshots (with breadcrumbs) of your character in action are a must.
 
 #### Process Letter
-Now that you have implemented and evaluated a number of algorithms, be sure to draft a process letter to talk about your implementation and learning process throughout development. We strongly recommend that you do not limit yourself to only answering those questions posed in this assignment. Think creatively about what you have done. What other parameters can you tweak and what effect do they have on the results? 
+Now that you have implemented and evaluated a number of algorithms write a 3-5 page paper summarizing your findings. We strongly recommend that you do not limit yourself to only answering those questions posed in this assignment. Think creatively about what you have done. What other parameters can you tweak and what effect do they have on the results? 
 
 > [!TIP]
 > The most successful write-ups will contain evidence that you have thought deeply about these algorithms and have gone beyond what is written in the assignment: comment not on what you have done, instead comment on what you have learned and how you have learned it!
 
 Place a PDF of your letter in the assignment folder within `apps/myApps/`. That is, if your assignment folder is called `gameAI`, then place your letter at `apps/myApps/gameAI/letter.pdf`
 
+##### Formatting for your Process Letter
+Your paper must be formatted with the ToDIGRA submission template, available here: http://todigra.org/index.php/todigra/about/submissions. Please name your writeup file per the following convention: [last name]_assignment[number]_report.pdf
 
 ##### About Ungrading and Process Letters
 This class is [ungraded](https://www.jessestommel.com/ungrading-an-faq/).
@@ -99,50 +74,65 @@ To help you draft one, imagine someone is creating a documentary of you as you c
 - do you think what you did is relevant to your class project?
 - what have you not done yet that you have seen in other games?
 
-##### Formatting for your Process Letter
-Your letter should be 1-2 pages long (2 pages max), formatted as a PDF. You are not required to adhere to any style. To make it a bit easier on drafting, the screenshots you include in your letter do not count toward your 2 page limit.
+#### Submission Instructions
+By the deadline stated on the syllabus, please provide a link to a Github or Gitlab repository that we can access to grade. The repository should contain all of your code (including the openFrameworks library itself), and should also contain your process letter in .pdf format.
 
-If you would still like a suggested style, here is a (completely optional) style you could follow: 1-inch margins, 12-point Times New Roman or Arial font, 1.15inch spacing. 
+Your repository must include a README text/Markdown file containing a description of how to run your code, as well as where to find the source code relevant to each of the sections identified above, as well as any special instructions we need to consider to run your code.
 
 ## Rubric
 > [!IMPORTANT]
 > As mentioned in the class syllabus, this class is entirely based on the process letters. However, to help you get a sense of your own mastery within the assignment, all assignments will be *virtually* graded according to a rubric. Your virtual grade has **nothing** to do with your official standing or grade in the course; it is simply a reflection of your proficiency within this assignment, and you should use it to calibrate how close you are to meeting the learning objectives of this course, which is what we truly care about.
 
-### Kinematic Motion (1 Point).
-- (0.25) Rigidbody data structure created.
-- (0.25) Leaves breadcrumbs as the shape traverses the screen.
-- (0.50) Moves in a circuit path around the screen. 
+### First Steps (1.5 Points).
+- (0.5)	First (small) Graph created.
+- (1.0)	Second (large) Graph created with more than 1000 nodes.
+  
+### Dijkstra’s Algorithm, A* (2.5 Points). 
+- (1.0)	Dijkstra’s Algorithm created.
+- (1.0)	A* Algorithm created.
+- (0.5)	Simple heuristic created.
 
-### Dynamic Steering Behaviors (3 Points).
-- (1) Seek algorithm created.
-- (0.5) Shape seeks location of mouse clicks. 
-- (1) Shape is oriented in the direction of travel. 
-- (0.5) Two methods of arriving are implemented.
+### Heuristics (0.5 Point).
+- (0.5)	Second heuristic created for second graph.
 
-### Wander Steering Behaviors (4 Points).
-- (1) Wander algorithm created.
-- (1) Boundary violations are handled gracefully (e.g., Toroidal world implemented). 
-- (1) Shape is oriented in the direction of travel.
-- (1) Two methods for changing orientation.
+### Putting It All Together (4.0 Points).
+- (0.5)	Indoor environment is designed.
+- (1.0)	Abstraction scheme is implemented.
+- (1.0)	Boid performs A* Pathfinding to a click.
+- (0.5)	Boid performs Pathfollowing on the computed path.
+- (1.0)	Pathfinding/Pathfollowing “looks good:” the Boid does not touch the walls at all.
 
-### Flocking Behavior and Blending (7 Points).
-- (0.5) Leader Boid is distinguished. 
-- (0.5) Leader Boid wanders correctly. 
-- (2) Flock is cohesive.
-- (2) Flock follows center of mass. 
-- (2) Flock “looks good.”
+### The Walls Are Lava™ (Variable multiplier). If the Boid does touch the wall during pathfinding, the score is slightly reduced:
+- If the Boid has little overlap with walls, your score will be multiplied by 0.95.
+- If the Boid has moderate overlap with walls, your score will be multiplied by 0.85.
+- If the Boid has significant overlap with walls, your score will be multiplied by 0.75.
 
-### Process Letter (10 Points)
-- (0.5) Dynamic Steering Behavior questions posed in the assignment are answered.
-- (0.5) Dynamic Steering Behavior is illustrated with screenshots.
-- (2) Dynamic Steering Behavior discussion contains metacognitive reflection (beyond what the assignment asks).
-- (0.5) Wander Steering Behavior questions posed in the assignment are answered.
-- (0.5) Wander Steering Behavior is illustrated with screenshots.
-- (2) Wander Steering Behavior discussion contains metacognitive reflection (beyond what the assignment asks).
-- (1) Flocking and Blending questions posed in the assignment are answered.
-- (1) Flocking and Blending is illustrated with screenshots.
-- (2) Flocking and Blending discussion contains metacognitive reflection (beyond what the assignment asks).
+### Process Letter (6.0 Points).
+- (0.25) First Steps questions posed in the assignment are answered.
+- (0.25) First Steps is illustrated with screenshots.
+- (1.0)	Dijkstra’s Algorithm, A* questions posed in the assignment are answered.
+- (0.5)	Dijkstra’s Algorithm, A* is illustrated with screenshots.
+- (1.0)	Dijkstra’s Algorithm, A* discussion contains something unique (beyond what the assignment asks).
+- (1.5)	Heuristics questions posed in the assignment are answered.
+- (1.0)	Heuristics analysis is presented with supporting data.
+- (0.5)	Putting It All Together is presented with supporting screenshots.
 
-#### Multipliers
-- Does Not Compile / Build: (×0) multiplier
-- Contains style/polish comparable to [openFrameworks examples](https://openframeworks.cc/examples/): (x1.5) multipler
+## Multipliers
+
+### Codebase Style
+- No README (×0 multiplier). The Github / Gitlab repository does not have a README file.
+- Does Not Compile / Build (×0 multiplier). The code submission does not compile per the instructions on the README.
+- C++ Coding Style not followed (Variable multiplier). The code does not follow Google’s C++ Style guide, per: https://google.github.io/styleguide/cppguide.html
+    - If you deviate >5 times, your score for that portion will be multiplied by 0.95.
+    - If you deviate >10 times, your score for that portion will be multiplied by 0.85.
+    - If you deviate >15 times, your score for that portion will be multiplied by 0.75.
+ 
+### Writeup Style
+- Format (×0 multiplier). The writeup does not adhere to the ToDIGRA submission template, available here: http://todigra.org/index.php/todigra/about/submissions. Note: you are not submitting this for anonymous review. :)
+- Page Count (Variable multiplier). Your writeup must hit at least 3 pages of content. If you have less than 3, then the writeup score will be multiplied by (n / 3), where n is the teaching staff’s estimate of how much page content you have.
+- Spelling and Grammar (Variable multiplier). Having proper grammar and spelling is important and difficult. If you are having trouble, ask for help from your classmates or the university writing center.
+    - If you have 1-3 grammar/spelling mistakes, your score will be multiplied by 0.95.
+    - If you have 4-6 grammar/spelling mistakes, your score will be multiplied by 0.85.
+    - If you have 7+ grammar/spelling mistakes, your score will be multiplied by 0.75.
+
+

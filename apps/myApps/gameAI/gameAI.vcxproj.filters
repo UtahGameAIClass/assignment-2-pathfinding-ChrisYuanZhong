@@ -8,21 +8,24 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Boid.cpp">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClCompile>
     <ClCompile Include="GameAIGameObject.cpp">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{d8376475-7454-4a24-b08a-aac121d3ad6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="gameAI">
+    <Filter Include="Movement">
       <UniqueIdentifier>{9eaadd54-524d-4a71-b700-1d6ce64050ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pathfinding">
+      <UniqueIdentifier>{417f2b87-a64b-4081-8a69-10464ba39e38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,13 +33,13 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Boid.h">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClInclude>
     <ClInclude Include="GameAIGameObject.h">
-      <Filter>gameAI</Filter>
+      <Filter>Movement</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

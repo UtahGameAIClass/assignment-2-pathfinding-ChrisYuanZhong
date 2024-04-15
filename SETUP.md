@@ -1,4 +1,4 @@
-# Assignment1-MovementAI Setup
+# Assignment2-PathFinding Setup
 
 ## Overview
 1. [Accepting the Assignment](#Accepting-the-Assignment)
