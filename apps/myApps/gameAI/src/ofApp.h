@@ -3,6 +3,7 @@
 #include "ofMain.h"
 
 #include "GameAIGameObject.h"
+#include "DirectedWeightedGraph.h"
 
 class ofApp : public ofBaseApp{
 
@@ -35,8 +36,14 @@ class ofApp : public ofBaseApp{
 		void Wander2Demo();
 		void FlockingDemo();
 
+		DirectedWeightedGraph CreateCityMap();
+		DirectedWeightedGraph CreateLargeGraph();
+
 private:
 	float lastTime;
 
 	std::vector<GameAIGameObject*> gameObjects;
+
+	DirectedWeightedGraph cityMap;
+	std::vector<DirectedWeightedEdge> path;
 };

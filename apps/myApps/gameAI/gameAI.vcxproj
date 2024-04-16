@@ -104,14 +104,19 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AStar.cpp" />
     <ClCompile Include="Boid.cpp" />
+    <ClCompile Include="Dijkstra.cpp" />
     <ClCompile Include="GameAIGameObject.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStar.h" />
     <ClInclude Include="Boid.h" />
+    <ClInclude Include="Dijkstra.h" />
+    <ClInclude Include="DirectedWeightedGraph.h" />
     <ClInclude Include="GameAIGameObject.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="src\ofApp.h" />

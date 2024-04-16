@@ -5,11 +5,18 @@
 #include "Player.h"
 #include "Boid.h"
 
+#include "Dijkstra.h"
+#include "AStar.h"
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	lastTime = ofGetElapsedTimef();
 
-	FlockingDemo();
+	//FlockingDemo();
+
+	// Create a DirectedWeightedGraph object
+	cityMap = CreateCityMap();
+	path = AStar(cityMap, 0, 14);
 }
 
 //--------------------------------------------------------------
@@ -32,18 +39,27 @@ void ofApp::draw(){
 		gameObjects[i]->Draw();
 	}
 
+	// Print the path
+	string pathString = "Path: ";
+	for each (DirectedWeightedEdge edge in path)
+	{
+		pathString += to_string(edge.source) + " -> ";
+	}
+	pathString += to_string(path[path.size() - 1].destination);
+	ofDrawBitmapString(pathString, 10, 20);
+
 	// Show the demonstration name
-	ofDrawBitmapString("1 - Seek: Seek where the mouse clicks", 10, 20);
-	ofDrawBitmapString("2 - Arrive: Arrive where the mouse clicks", 10, 40);
-	ofDrawBitmapString("3 - AdvancedArrive: Arrive better where the mouse clicks", 10, 60);
-	ofDrawBitmapString("4 - Flee: Flee from where the mouse clicks", 10, 80);
-	ofDrawBitmapString("5 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 100);
-	ofDrawBitmapString("6 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 120);
-	ofDrawBitmapString("7 - Wander: Wander around leaving a trace (Designed by Craig)", 10, 140);
-	ofDrawBitmapString("8 - Wander2: Wander to a random target (Designed by me)", 10, 160);
-	ofDrawBitmapString("9 - Flocking: Flocking with the red leader", 10, 180);
-	ofDrawBitmapString("Press the number to change the demonstration", 10, 200);
-	ofDrawBitmapString("The little white dot represents the target of a boid", 10, 220);
+	//ofDrawBitmapString("1 - Seek: Seek where the mouse clicks", 10, 20);
+	//ofDrawBitmapString("2 - Arrive: Arrive where the mouse clicks", 10, 40);
+	//ofDrawBitmapString("3 - AdvancedArrive: Arrive better where the mouse clicks", 10, 60);
+	//ofDrawBitmapString("4 - Flee: Flee from where the mouse clicks", 10, 80);
+	//ofDrawBitmapString("5 - Pursue: Pursue the blue player controled by [W][A][S][D]", 10, 100);
+	//ofDrawBitmapString("6 - Evade: Evade the blue player controled by [W][A][S][D]", 10, 120);
+	//ofDrawBitmapString("7 - Wander: Wander around leaving a trace (Designed by Craig)", 10, 140);
+	//ofDrawBitmapString("8 - Wander2: Wander to a random target (Designed by me)", 10, 160);
+	//ofDrawBitmapString("9 - Flocking: Flocking with the red leader", 10, 180);
+	//ofDrawBitmapString("Press the number to change the demonstration", 10, 200);
+	//ofDrawBitmapString("The little white dot represents the target of a boid", 10, 220);
 }
 
 //--------------------------------------------------------------
@@ -254,4 +270,61 @@ void ofApp::FlockingDemo()
 	for (int i = 0; i < 10; i++) {
 		gameObjects.push_back(new Boid(&gameObjects));
 	}
+}
+
+DirectedWeightedGraph ofApp::CreateCityMap()
+{
+	// Create a DirectedWeightedGraph object
+	DirectedWeightedGraph cityMap;
+
+	// Add edges to the graph representing roads between intersections
+	cityMap.addEdge(DirectedWeightedEdge(0, 1, 3));
+	cityMap.addEdge(DirectedWeightedEdge(0, 2, 4));
+	cityMap.addEdge(DirectedWeightedEdge(1, 3, 2));
+	cityMap.addEdge(DirectedWeightedEdge(1, 4, 5));
+	cityMap.addEdge(DirectedWeightedEdge(2, 5, 6));
+	cityMap.addEdge(DirectedWeightedEdge(3, 6, 3));
+	cityMap.addEdge(DirectedWeightedEdge(4, 6, 4));
+	cityMap.addEdge(DirectedWeightedEdge(4, 7, 2));
+	cityMap.addEdge(DirectedWeightedEdge(5, 7, 5));
+	cityMap.addEdge(DirectedWeightedEdge(6, 8, 6));
+	cityMap.addEdge(DirectedWeightedEdge(7, 8, 3));
+	cityMap.addEdge(DirectedWeightedEdge(7, 9, 4));
+	cityMap.addEdge(DirectedWeightedEdge(8, 9, 2));
+	cityMap.addEdge(DirectedWeightedEdge(9, 10, 5));
+	cityMap.addEdge(DirectedWeightedEdge(10, 11, 6));
+	cityMap.addEdge(DirectedWeightedEdge(11, 12, 3));
+	cityMap.addEdge(DirectedWeightedEdge(12, 13, 4));
+	cityMap.addEdge(DirectedWeightedEdge(13, 14, 2));
+	cityMap.addEdge(DirectedWeightedEdge(14, 0, 5));
+
+	return cityMap;
+}
+
+DirectedWeightedGraph ofApp::CreateLargeGraph()
+{
+	// Number of vertices in the graph
+	const int numVertices = 10000; // Adjust this number as needed
+
+	// Create a DirectedWeightedGraph object
+	DirectedWeightedGraph largeGraph;
+
+	// Seed the random number generator
+	srand(time(nullptr));
+
+	// Generate random edges with positive integer weights
+	for (int i = 0; i < numVertices; ++i) {
+		// Randomly decide how many edges to create for each vertex
+		int numEdges = rand() % 10 + 1; // Each vertex will have 1 to 10 edges
+
+		for (int j = 0; j < numEdges; ++j) {
+			int destination = rand() % numVertices;
+			int weight = rand() % 100 + 1; // Weight between 1 and 100
+
+			// Add the edge to the graph
+			largeGraph.addEdge(DirectedWeightedEdge(i, destination, weight));
+		}
+	}
+
+	return largeGraph;
 }

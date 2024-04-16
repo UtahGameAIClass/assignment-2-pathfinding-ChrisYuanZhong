@@ -16,6 +16,10 @@
     <ClCompile Include="GameAIGameObject.cpp">
       <Filter>Movement</Filter>
     </ClCompile>
+    <ClCompile Include="Dijkstra.cpp">
+      <Filter>Pathfinding</Filter>
+    </ClCompile>
+    <ClCompile Include="AStar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -40,6 +44,15 @@
     </ClInclude>
     <ClInclude Include="GameAIGameObject.h">
       <Filter>Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectedWeightedGraph.h">
+      <Filter>Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="Dijkstra.h">
+      <Filter>Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="AStar.h">
+      <Filter>Pathfinding</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
