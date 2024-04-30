@@ -15,8 +15,8 @@ void ofApp::setup(){
 	//FlockingDemo();
 
 	// Create a DirectedWeightedGraph object
-	cityMap = CreateCityMap();
-	path = AStar(cityMap, 0, 14);
+	cityMap = CreateSmallGraph();
+	path = AStar(cityMap, 0, 7);
 }
 
 //--------------------------------------------------------------
@@ -41,11 +41,19 @@ void ofApp::draw(){
 
 	// Print the path
 	string pathString = "Path: ";
-	for each (DirectedWeightedEdge edge in path)
+
+	if (path.size() == 0)
 	{
-		pathString += to_string(edge.source) + " -> ";
+		pathString += "No path found";
 	}
-	pathString += to_string(path[path.size() - 1].destination);
+	else
+	{
+		for each (DirectedWeightedEdge edge in path)
+		{
+			pathString += to_string(edge.source) + " -> ";
+		}
+		pathString += to_string(path[path.size() - 1].destination);
+	}
 	ofDrawBitmapString(pathString, 10, 20);
 
 	// Show the demonstration name
@@ -272,58 +280,69 @@ void ofApp::FlockingDemo()
 	}
 }
 
-DirectedWeightedGraph ofApp::CreateCityMap()
+DirectedWeightedGraph ofApp::CreateSmallGraph()
 {
-	// Create a DirectedWeightedGraph object
-	DirectedWeightedGraph cityMap;
+	DirectedWeightedGraph smallGraph;
 
-	// Add edges to the graph representing roads between intersections
-	cityMap.addEdge(DirectedWeightedEdge(0, 1, 3));
-	cityMap.addEdge(DirectedWeightedEdge(0, 2, 4));
-	cityMap.addEdge(DirectedWeightedEdge(1, 3, 2));
-	cityMap.addEdge(DirectedWeightedEdge(1, 4, 5));
-	cityMap.addEdge(DirectedWeightedEdge(2, 5, 6));
-	cityMap.addEdge(DirectedWeightedEdge(3, 6, 3));
-	cityMap.addEdge(DirectedWeightedEdge(4, 6, 4));
-	cityMap.addEdge(DirectedWeightedEdge(4, 7, 2));
-	cityMap.addEdge(DirectedWeightedEdge(5, 7, 5));
-	cityMap.addEdge(DirectedWeightedEdge(6, 8, 6));
-	cityMap.addEdge(DirectedWeightedEdge(7, 8, 3));
-	cityMap.addEdge(DirectedWeightedEdge(7, 9, 4));
-	cityMap.addEdge(DirectedWeightedEdge(8, 9, 2));
-	cityMap.addEdge(DirectedWeightedEdge(9, 10, 5));
-	cityMap.addEdge(DirectedWeightedEdge(10, 11, 6));
-	cityMap.addEdge(DirectedWeightedEdge(11, 12, 3));
-	cityMap.addEdge(DirectedWeightedEdge(12, 13, 4));
-	cityMap.addEdge(DirectedWeightedEdge(13, 14, 2));
-	cityMap.addEdge(DirectedWeightedEdge(14, 0, 5));
+	// Add nodes (cities)
+	std::vector<Node> cities = {
+		Node(10, 75), Node(45, 20), Node(70, 85), Node(30, 50),
+		Node(55, 95), Node(90, 60), Node(20, 35), Node(80, 10)
+	};
 
-	return cityMap;
+	for (int i = 0; i < cities.size(); ++i) {
+		smallGraph.addNode(i, cities[i]);
+	}
+
+	// Use Euclidean distance as edge weight
+	smallGraph.addEdge(DirectedWeightedEdge(0, 1, 70.71f));
+	smallGraph.addEdge(DirectedWeightedEdge(0, 2, 60.83f));
+	smallGraph.addEdge(DirectedWeightedEdge(0, 3, 32.02f));
+	smallGraph.addEdge(DirectedWeightedEdge(1, 2, 67.18f));
+	smallGraph.addEdge(DirectedWeightedEdge(1, 3, 36.06f));
+	smallGraph.addEdge(DirectedWeightedEdge(1, 4, 75.33f));
+	smallGraph.addEdge(DirectedWeightedEdge(2, 4, 17.49f));
+	smallGraph.addEdge(DirectedWeightedEdge(2, 5, 29.68f));
+	smallGraph.addEdge(DirectedWeightedEdge(3, 6, 15.13f));
+	smallGraph.addEdge(DirectedWeightedEdge(4, 5, 47.17f));
+	smallGraph.addEdge(DirectedWeightedEdge(4, 7, 87.80f));
+	smallGraph.addEdge(DirectedWeightedEdge(5, 7, 50.00f));
+	smallGraph.addEdge(DirectedWeightedEdge(6, 7, 66.94f));
+	smallGraph.addEdge(DirectedWeightedEdge(7, 1, 37.42f));
+
+
+	return smallGraph;
 }
 
 DirectedWeightedGraph ofApp::CreateLargeGraph()
 {
-	// Number of vertices in the graph
-	const int numVertices = 10000; // Adjust this number as needed
-
-	// Create a DirectedWeightedGraph object
 	DirectedWeightedGraph largeGraph;
 
-	// Seed the random number generator
-	srand(time(nullptr));
+	// Number of edges
+	int numEdges = 10000;
 
-	// Generate random edges with positive integer weights
-	for (int i = 0; i < numVertices; ++i) {
-		// Randomly decide how many edges to create for each vertex
-		int numEdges = rand() % 10 + 1; // Each vertex will have 1 to 10 edges
+	// Start with a certain number of nodes (e.g., square root of number of edges)
+	int numNodes = static_cast<int>(sqrt(numEdges));
 
-		for (int j = 0; j < numEdges; ++j) {
-			int destination = rand() % numVertices;
-			int weight = rand() % 100 + 1; // Weight between 1 and 100
+	// Add nodes
+	for (int i = 0; i < numNodes; ++i) {
+		float x = static_cast<float>(rand() % 1000);  // Random x coordinate between 0 and 1000
+		float y = static_cast<float>(rand() % 1000);  // Random y coordinate between 0 and 1000
+		largeGraph.addNode(i, Node(x, y));
+	}
 
-			// Add the edge to the graph
-			largeGraph.addEdge(DirectedWeightedEdge(i, destination, weight));
+	// Add edges
+	for (int i = 0; i < numEdges; ++i) {
+		int source = rand() % numNodes;  // Random source node
+		int destination = rand() % numNodes;  // Random destination node
+		while (source == destination) {  // Ensure source and destination are not the same
+			destination = rand() % numNodes;
 		}
+		// Calculate Euclidean distance between source and destination nodes
+		float dx = largeGraph.getNode(source).x - largeGraph.getNode(destination).x;
+		float dy = largeGraph.getNode(source).y - largeGraph.getNode(destination).y;
+		float weight = sqrt(dx * dx + dy * dy);  // Euclidean distance
+		largeGraph.addEdge(DirectedWeightedEdge(source, destination, weight));
 	}
 
 	return largeGraph;

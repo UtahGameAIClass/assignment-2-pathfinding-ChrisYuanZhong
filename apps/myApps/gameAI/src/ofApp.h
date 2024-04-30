@@ -36,7 +36,7 @@ class ofApp : public ofBaseApp{
 		void Wander2Demo();
 		void FlockingDemo();
 
-		DirectedWeightedGraph CreateCityMap();
+		DirectedWeightedGraph CreateSmallGraph();
 		DirectedWeightedGraph CreateLargeGraph();
 
 private:

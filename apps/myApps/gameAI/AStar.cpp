@@ -3,7 +3,9 @@
 
 float heuristic(const DirectedWeightedGraph& graph, int startNode, int endNode)
 {
-	return 2.0f;
+    float dx = graph.getNode(endNode).x - graph.getNode(startNode).x;
+    float dy = graph.getNode(endNode).y - graph.getNode(startNode).y;
+    return sqrt(dx * dx + dy * dy);
 }
 
 std::vector<DirectedWeightedEdge> AStar(const DirectedWeightedGraph& graph, int startNode, int endNode)
