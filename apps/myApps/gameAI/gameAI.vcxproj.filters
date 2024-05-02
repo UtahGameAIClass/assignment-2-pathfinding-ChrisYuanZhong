@@ -20,6 +20,12 @@
       <Filter>Pathfinding</Filter>
     </ClCompile>
     <ClCompile Include="AStar.cpp" />
+    <ClCompile Include="TileMap.cpp">
+      <Filter>Pathfinding</Filter>
+    </ClCompile>
+    <ClCompile Include="PathfindingBoid.cpp">
+      <Filter>Pathfinding</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -52,6 +58,12 @@
       <Filter>Pathfinding</Filter>
     </ClInclude>
     <ClInclude Include="AStar.h">
+      <Filter>Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMap.h">
+      <Filter>Pathfinding</Filter>
+    </ClInclude>
+    <ClInclude Include="PathfindingBoid.h">
       <Filter>Pathfinding</Filter>
     </ClInclude>
   </ItemGroup>

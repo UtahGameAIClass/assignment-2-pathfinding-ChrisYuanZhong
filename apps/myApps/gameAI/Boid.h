@@ -57,7 +57,7 @@ public:
 	eae6320::Math::sVector Separation(std::vector<GameAIGameObject*> i_boids);
 	eae6320::Math::sVector Flock(std::vector<GameAIGameObject*> i_boids);
 
-private:
+protected:
 	// Color of the boid
 	ofColor color = ofColor::white;
 

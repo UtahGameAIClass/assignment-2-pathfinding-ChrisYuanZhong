@@ -108,9 +108,11 @@
     <ClCompile Include="Boid.cpp" />
     <ClCompile Include="Dijkstra.cpp" />
     <ClCompile Include="GameAIGameObject.cpp" />
+    <ClCompile Include="PathfindingBoid.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="TileMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AStar.h" />
@@ -118,8 +120,10 @@
     <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="DirectedWeightedGraph.h" />
     <ClInclude Include="GameAIGameObject.h" />
+    <ClInclude Include="PathfindingBoid.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(OF_ROOT)\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">

@@ -4,6 +4,7 @@
 
 #include "Player.h"
 #include "Boid.h"
+#include "PathfindingBoid.h"
 
 #include "Dijkstra.h"
 #include "AStar.h"
@@ -12,11 +13,22 @@
 void ofApp::setup(){
 	lastTime = ofGetElapsedTimef();
 
-	//FlockingDemo();
+	AStarDemo();
 
 	// Create a DirectedWeightedGraph object
-	cityMap = CreateSmallGraph();
-	path = AStar(cityMap, 0, 7);
+	//cityMap = CreateSmallGraph();
+	//cityMap = CreateLargeGraph();
+
+	//path = Dijkstra(cityMap, 3, 50);
+	//path = AStar(cityMap, 3, 50);
+
+	//AStarTime = ofGetElapsedTimef();
+	//path = AStar(cityMap, 3, 50);
+	//AStarTime = ofGetElapsedTimef() - AStarTime;
+
+	//DijkstraTime = ofGetElapsedTimef();
+	//path = Dijkstra(cityMap, 3, 50);
+	//DijkstraTime = ofGetElapsedTimef() - DijkstraTime;
 }
 
 //--------------------------------------------------------------
@@ -35,26 +47,28 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	for (int i = 0; i < gameObjects.size(); i++) {
-		gameObjects[i]->Draw();
-	}
+	//// Print the path
+	//string pathString = "Path: ";
 
-	// Print the path
-	string pathString = "Path: ";
+	//if (path.size() == 0)
+	//{
+	//	pathString += "No path found";
+	//}
+	//else
+	//{
+	//	for each (DirectedWeightedEdge edge in path)
+	//	{
+	//		pathString += to_string(edge.source) + " -> ";
+	//	}
+	//	pathString += to_string(path[path.size() - 1].destination);
+	//}
+	//ofDrawBitmapString(pathString, 10, 20);
 
-	if (path.size() == 0)
-	{
-		pathString += "No path found";
-	}
-	else
-	{
-		for each (DirectedWeightedEdge edge in path)
-		{
-			pathString += to_string(edge.source) + " -> ";
-		}
-		pathString += to_string(path[path.size() - 1].destination);
-	}
-	ofDrawBitmapString(pathString, 10, 20);
+	//// Print the time taken by Dijkstra's algorithm
+	//ofDrawBitmapString("Dijkstra Time: " + to_string(DijkstraTime), 10, 40);
+
+	//// Print the time taken by A* algorithm
+	//ofDrawBitmapString("A* Time: " + to_string(AStarTime), 10, 60);
 
 	// Show the demonstration name
 	//ofDrawBitmapString("1 - Seek: Seek where the mouse clicks", 10, 20);
@@ -68,6 +82,17 @@ void ofApp::draw(){
 	//ofDrawBitmapString("9 - Flocking: Flocking with the red leader", 10, 180);
 	//ofDrawBitmapString("Press the number to change the demonstration", 10, 200);
 	//ofDrawBitmapString("The little white dot represents the target of a boid", 10, 220);
+
+
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->Draw();
+	}
+
+	ofDrawBitmapString("A* Pathfinding", 10, 20);
+	ofDrawBitmapString("Click on the map to set the target", 10, 40);
+	ofDrawBitmapString("Red circles represent the path", 10, 60);
+	ofDrawBitmapString("Blue circle represents the pathfinding target", 10, 80);
+	ofDrawBitmapString("White circle represents the boid's SEEK target", 10, 100);
 }
 
 //--------------------------------------------------------------
@@ -76,46 +101,50 @@ void ofApp::keyPressed(int key){
 		gameObjects[i]->keyPressed(key);
 	}
 
-	switch (key) {
-		case '1':
-			ClearGameObjects();
-			SeekDemo();
-			break;
-		case '2':
-			ClearGameObjects();
-			ArriveDemo();
-			break;
-		case '3':
-			ClearGameObjects();
-			AdvancedArriveDemo();
-			break;
-		case '4':
-			ClearGameObjects();
-			FleeDemo();
-			break;
-		case '5':
-			ClearGameObjects();
-			PursueDemo();
-			break;
-		case '6':
-			ClearGameObjects();
-			EvadeDemo();
-			break;
-		case '7':
-			ClearGameObjects();
-			WanderDemo();
-			break;
-		case '8':
-			ClearGameObjects();
-			Wander2Demo();
-			break;
-		case '9':
-			ClearGameObjects();
-			FlockingDemo();
-			break;
-		default:
-			break;
-	}
+	//switch (key) {
+	//	case '1':
+	//		ClearGameObjects();
+	//		SeekDemo();
+	//		break;
+	//	case '2':
+	//		ClearGameObjects();
+	//		ArriveDemo();
+	//		break;
+	//	case '3':
+	//		ClearGameObjects();
+	//		AdvancedArriveDemo();
+	//		break;
+	//	case '4':
+	//		ClearGameObjects();
+	//		FleeDemo();
+	//		break;
+	//	case '5':
+	//		ClearGameObjects();
+	//		PursueDemo();
+	//		break;
+	//	case '6':
+	//		ClearGameObjects();
+	//		EvadeDemo();
+	//		break;
+	//	case '7':
+	//		ClearGameObjects();
+	//		WanderDemo();
+	//		break;
+	//	case '8':
+	//		ClearGameObjects();
+	//		Wander2Demo();
+	//		break;
+	//	case '9':
+	//		ClearGameObjects();
+	//		FlockingDemo();
+	//		break;
+	//	case '0':
+	//		ClearGameObjects();
+	//		AStarDemo();
+	//		break;
+	//	default:
+	//		break;
+	//}
 }
 
 //--------------------------------------------------------------
@@ -278,6 +307,82 @@ void ofApp::FlockingDemo()
 	for (int i = 0; i < 10; i++) {
 		gameObjects.push_back(new Boid(&gameObjects));
 	}
+}
+
+void ofApp::AStarDemo()
+{
+	tileMap = new TileMap(100, 75);
+
+	tileMap->SetObstacle(30, 40, true);
+	tileMap->SetObstacle(30, 41, true);
+	tileMap->SetObstacle(30, 42, true);
+	tileMap->SetObstacle(30, 43, true);
+	tileMap->SetObstacle(30, 44, true);
+	tileMap->SetObstacle(30, 45, true);
+	tileMap->SetObstacle(30, 46, true);
+	tileMap->SetObstacle(30, 47, true);
+	tileMap->SetObstacle(30, 48, true);
+	tileMap->SetObstacle(30, 49, true);
+	tileMap->SetObstacle(30, 50, true);
+	tileMap->SetObstacle(30, 51, true);
+	tileMap->SetObstacle(30, 52, true);
+	tileMap->SetObstacle(30, 53, true);
+	tileMap->SetObstacle(30, 54, true);
+	tileMap->SetObstacle(30, 55, true);
+	tileMap->SetObstacle(30, 56, true);
+	tileMap->SetObstacle(30, 57, true);
+	tileMap->SetObstacle(30, 58, true);
+	tileMap->SetObstacle(30, 59, true);
+	tileMap->SetObstacle(30, 60, true);
+
+	tileMap->SetObstacle(50, 50, true);
+	tileMap->SetObstacle(50, 51, true);
+	tileMap->SetObstacle(50, 52, true);
+	tileMap->SetObstacle(50, 53, true);
+	tileMap->SetObstacle(50, 54, true);
+	tileMap->SetObstacle(50, 55, true);
+	tileMap->SetObstacle(50, 56, true);
+	tileMap->SetObstacle(50, 57, true);
+	tileMap->SetObstacle(50, 58, true);
+	tileMap->SetObstacle(50, 59, true);
+	tileMap->SetObstacle(50, 60, true);
+	tileMap->SetObstacle(50, 61, true);
+	tileMap->SetObstacle(50, 62, true);
+	tileMap->SetObstacle(50, 63, true);
+	tileMap->SetObstacle(50, 64, true);
+	tileMap->SetObstacle(50, 65, true);
+	tileMap->SetObstacle(50, 66, true);
+	tileMap->SetObstacle(50, 67, true);
+	tileMap->SetObstacle(50, 68, true);
+	tileMap->SetObstacle(50, 69, true);
+	tileMap->SetObstacle(50, 70, true);
+
+	tileMap->SetObstacle(40, 15, true);
+	tileMap->SetObstacle(40, 16, true);
+	tileMap->SetObstacle(40, 17, true);
+	tileMap->SetObstacle(40, 18, true);
+	tileMap->SetObstacle(40, 19, true);
+	tileMap->SetObstacle(40, 20, true);
+	tileMap->SetObstacle(40, 21, true);
+	tileMap->SetObstacle(40, 22, true);
+	tileMap->SetObstacle(40, 23, true);
+	tileMap->SetObstacle(40, 24, true);
+	tileMap->SetObstacle(40, 25, true);
+	tileMap->SetObstacle(40, 26, true);
+	tileMap->SetObstacle(40, 27, true);
+	tileMap->SetObstacle(40, 28, true);
+	tileMap->SetObstacle(40, 29, true);
+	tileMap->SetObstacle(40, 30, true);
+	tileMap->SetObstacle(40, 31, true);
+	tileMap->SetObstacle(40, 32, true);
+	tileMap->SetObstacle(40, 33, true);
+	tileMap->SetObstacle(40, 34, true);
+
+	// Create a boid
+	PathfindingBoid* boid = new PathfindingBoid(tileMap, 5.0f, 20.0f, 0.0f);
+
+	// Add the boid to the game objects
+	gameObjects.push_back(boid);
 }
 
 DirectedWeightedGraph ofApp::CreateSmallGraph()

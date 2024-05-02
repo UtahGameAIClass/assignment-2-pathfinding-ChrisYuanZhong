@@ -4,6 +4,7 @@
 
 #include "GameAIGameObject.h"
 #include "DirectedWeightedGraph.h"
+#include "TileMap.h"
 
 class ofApp : public ofBaseApp{
 
@@ -36,6 +37,10 @@ class ofApp : public ofBaseApp{
 		void Wander2Demo();
 		void FlockingDemo();
 
+		// Pathfinding Demonstrations
+		//void DijkstraDemo();
+		void AStarDemo();
+
 		DirectedWeightedGraph CreateSmallGraph();
 		DirectedWeightedGraph CreateLargeGraph();
 
@@ -46,4 +51,10 @@ private:
 
 	DirectedWeightedGraph cityMap;
 	std::vector<DirectedWeightedEdge> path;
+
+	float DijkstraTime;
+	float AStarTime;
+
+	TileMap* tileMap;
+	//std::vector<Cell> mapPath;
 };
